@@ -1,0 +1,26 @@
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Shell
+.bash_profile
+.bashrc
+.profile
+.zprofile
+.zshrc
+
+# MCP
+.mcp.json
+
+# Temp
+.temp/
+
+# Config (may contain secrets)
+.gitconfig
+
+# AI commit ext (submodule)
+ai-commit-ext/

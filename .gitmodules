@@ -1,0 +1,3 @@
+[submodule "ai-commit-ext"]
+	path = ai-commit-ext
+	url = https://github.com/Sitoi/ai-commit.git
