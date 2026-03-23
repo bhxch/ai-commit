@@ -1,4 +1,5 @@
-import { loadConfig, type CLIOpts } from './config.js';
+import { loadConfig } from './config.js';
+import type { CLIOpts } from './types.js';
 import { createProvider, formatApiError } from './providers/index.js';
 import { getStagedDiff, stageAllChanges, gitCommit, truncateDiff } from './git.js';
 import { buildMessages, buildMessagesWithFile } from './prompts.js';
@@ -68,10 +69,16 @@ export async function run(opts: CLIOpts & { [key: string]: any }) {
       messages = buildMessages(config.language, config.gitmoji, truncatedDiff, config.context);
     }
 
-    const result = await provider.generate(messages, {
-      model: config.model,
-      temperature: config.temperature,
-    });
+    let result: string;
+    try {
+      result = await provider.generate(messages, {
+        model: config.model,
+        temperature: config.temperature,
+      });
+    } catch (err) {
+      process.stderr.write(`${formatApiError(err, config.provider)}\n`);
+      process.exit(1);
+    }
 
     // Apply prefix
     return config.prefix ? `${config.prefix} ${result}` : result;

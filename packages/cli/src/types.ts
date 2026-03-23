@@ -40,6 +40,21 @@ export interface ResolvedConfig {
   };
 }
 
+export interface CLIOpts {
+  provider?: string;
+  model?: string;
+  temperature?: number;
+  language?: string;
+  prefix?: string;
+  context?: string;
+  promptFile?: string;
+  gitmoji?: boolean;
+  stagedOnly?: boolean;
+  all?: boolean;
+  dryRun?: boolean;
+  yes?: boolean;
+}
+
 export interface RawConfigFile {
   provider?: string;
   model?: string;

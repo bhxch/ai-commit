@@ -1,7 +1,7 @@
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
-import type { ResolvedConfig, RawConfigFile } from './types.js';
+import type { ResolvedConfig, RawConfigFile, CLIOpts } from './types.js';
 
 const ENV_VAR_MAP: Record<string, { primary: string; fallback?: string; path: string[] }> = {
   provider: { primary: 'AICOMMIT_PROVIDER', path: ['provider'] },
@@ -86,32 +86,13 @@ function parseNumber(val: unknown): number | undefined {
   return isNaN(n) ? undefined : n;
 }
 
-export interface CLIOpts {
-  provider?: string;
-  model?: string;
-  temperature?: number;
-  language?: string;
-  prefix?: string;
-  context?: string;
-  promptFile?: string;
-  gitmoji?: boolean;
-  stagedOnly?: boolean;
-  all?: boolean;
-  dryRun?: boolean;
-  yes?: boolean;
-}
-
 export async function loadConfig(
   cliOpts: CLIOpts,
   projectDir?: string,
   onWarning?: (msg: string) => void,
 ): Promise<ResolvedConfig> {
   // Layer 1: Defaults
-  const result: ResolvedConfig = { ...DEFAULTS, ...DEFAULTS.openai, ...DEFAULTS.gemini, ...DEFAULTS.anthropic };
-  // Reset nested objects (spread flattened them)
-  result.openai = { ...DEFAULTS.openai };
-  result.gemini = { ...DEFAULTS.gemini };
-  result.anthropic = { ...DEFAULTS.anthropic };
+  const result: ResolvedConfig = structuredClone(DEFAULTS);
 
   // Layer 2: Global config file
   const globalConfig = readConfigFile(join(homedir(), '.aicommitrc.json'));
