@@ -6,7 +6,7 @@ import { buildMessages, buildMessagesWithFile } from './prompts.js';
 import { select, confirm, input } from '@inquirer/prompts';
 import { writeFileSync, readFileSync, unlinkSync, mkdtempSync } from 'fs';
 import { join } from 'path';
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import os from 'os';
 
 export async function run(opts: CLIOpts & { [key: string]: any }) {
@@ -45,13 +45,13 @@ export async function run(opts: CLIOpts & { [key: string]: any }) {
         await stageAllChanges();
         diff = await getStagedDiff();
       } else {
-        process.exit(0);
+        return;
       }
     }
   }
 
   if (!diff) {
-    process.exit(0);
+    return;
   }
 
   // 5. Truncate diff if too large
@@ -76,8 +76,7 @@ export async function run(opts: CLIOpts & { [key: string]: any }) {
         temperature: config.temperature,
       });
     } catch (err) {
-      process.stderr.write(`${formatApiError(err, config.provider)}\n`);
-      process.exit(1);
+      throw new Error(`API error: ${formatApiError(err, config.provider)}`);
     }
 
     // Apply prefix
@@ -124,7 +123,8 @@ export async function run(opts: CLIOpts & { [key: string]: any }) {
         const tmpFile = join(tmpDir, 'commit-message.txt');
         writeFileSync(tmpFile, message, 'utf-8');
         const editor = process.env.EDITOR || 'vim';
-        execSync(`${editor} "${tmpFile}"`, { stdio: 'inherit' });
+        const editorArgs = editor.split(' ');
+        execFileSync(editorArgs[0], [...editorArgs.slice(1), tmpFile], { stdio: 'inherit' });
         message = readFileSync(tmpFile, 'utf-8').trim();
         // Cleanup
         try {
