@@ -50,11 +50,20 @@ describe('buildMessages', () => {
 });
 
 describe('buildMessagesWithFile', () => {
-  it('reads custom prompt file and uses it as system message', async () => {
-    const { resolve } = await import('path');
-    const promptPath = resolve(process.cwd(), '../../ai-commit-ext/prompt/without_gitmoji.md');
-    const messages = buildMessagesWithFile(promptPath, 'English', 'diff content');
-    expect(messages[0].role).toBe('system');
-    expect(messages[0].content).not.toContain('<emoji>');
+  it('reads custom prompt file and uses it as system message', () => {
+    const { writeFileSync, mkdtempSync, rmSync } = require('fs') as typeof import('fs');
+    const { join } = require('path') as typeof import('path');
+    const { tmpdir } = require('os') as typeof import('os');
+    const tempDir = mkdtempSync(join(tmpdir(), 'aicommit-test-'));
+    const promptPath = join(tempDir, 'custom-prompt.md');
+    writeFileSync(promptPath, 'You are a helpful assistant. No emojis.');
+
+    try {
+      const messages = buildMessagesWithFile(promptPath, 'English', 'diff content');
+      expect(messages[0].role).toBe('system');
+      expect(messages[0].content).toContain('helpful assistant');
+    } finally {
+      rmSync(tempDir, { recursive: true, force: true });
+    }
   });
 });
