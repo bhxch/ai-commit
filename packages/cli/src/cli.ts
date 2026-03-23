@@ -10,7 +10,7 @@ import os from 'os';
 
 export async function run(opts: CLIOpts & { [key: string]: any }) {
   // 1. Load config
-  const config = await loadConfig(opts);
+  const config = await loadConfig(opts, undefined, (msg) => process.stderr.write(`${msg}\n`));
 
   // 2. Validate mutual exclusion: --all and --staged-only
   if (config.all && config.stagedOnly) {
