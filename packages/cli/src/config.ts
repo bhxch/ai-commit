@@ -52,11 +52,14 @@ function getNestedValue(obj: Record<string, unknown>, path: string[]): unknown {
   return current;
 }
 
-function readConfigFile(filePath: string): RawConfigFile {
+function readConfigFile(filePath: string, onWarning?: (msg: string) => void): RawConfigFile {
   if (!existsSync(filePath)) return {};
   try {
     return JSON.parse(readFileSync(filePath, 'utf-8')) as RawConfigFile;
   } catch {
+    if (onWarning) {
+      onWarning(`[warning] Failed to parse config file "${filePath}", using defaults.`);
+    }
     return {};
   }
 }
@@ -95,12 +98,12 @@ export async function loadConfig(
   const result: ResolvedConfig = structuredClone(DEFAULTS);
 
   // Layer 2: Global config file
-  const globalConfig = readConfigFile(join(homedir(), '.aicommitrc.json'));
+  const globalConfig = readConfigFile(join(homedir(), '.aicommitrc.json'), onWarning);
 
   // Layer 3: Project config file
   const projectRoot = projectDir || findGitRoot();
   const projectConfig = projectRoot
-    ? readConfigFile(join(projectRoot, '.aicommitrc.json'))
+    ? readConfigFile(join(projectRoot, '.aicommitrc.json'), onWarning)
     : {};
 
   // Determine suppressFallbackWarning: env var > project config > global config > default false
