@@ -1,0 +1,36 @@
+{
+  "name": "@bhxch/aicommit",
+  "version": "0.1.0",
+  "description": "AI-powered conventional commit message generator for the terminal",
+  "type": "module",
+  "bin": {
+    "aicommit": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsx src/index.ts",
+    "test": "vitest",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "commander": "^12.0.0",
+    "@inquirer/prompts": "^5.0.0",
+    "simple-git": "^3.27.0",
+    "openai": "^4.14.2",
+    "@google/generative-ai": "^0.21.0",
+    "@anthropic-ai/sdk": "^0.30.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "tsup": "^8.0.0",
+    "tsx": "^4.0.0",
+    "vitest": "^2.0.0",
+    "@types/node": "^20.0.0"
+  }
+}
