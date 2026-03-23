@@ -52,7 +52,7 @@ describe('buildMessages', () => {
 describe('buildMessagesWithFile', () => {
   it('reads custom prompt file and uses it as system message', async () => {
     const { resolve } = await import('path');
-    const promptPath = resolve(process.cwd(), 'ai-commit-ext/prompt/without_gitmoji.md');
+    const promptPath = resolve(process.cwd(), '../../ai-commit-ext/prompt/without_gitmoji.md');
     const messages = buildMessagesWithFile(promptPath, 'English', 'diff content');
     expect(messages[0].role).toBe('system');
     expect(messages[0].content).not.toContain('<emoji>');
