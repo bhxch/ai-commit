@@ -1,17 +1,19 @@
 import simpleGit from 'simple-git';
 
-const git = simpleGit();
+function getGit() {
+  return simpleGit();
+}
 
 export async function getStagedDiff(): Promise<string> {
-  return git.diff(['--staged']);
+  return getGit().diff(['--staged']);
 }
 
 export async function stageAllChanges(): Promise<void> {
-  await git.add(['-A']);
+  await getGit().add(['-A']);
 }
 
 export async function gitCommit(message: string): Promise<void> {
-  await git.commit(['-m', message]);
+  await getGit().commit(message);
 }
 
 export function truncateDiff(diff: string, maxLines: number = 10000): { diff: string; warning?: string } {

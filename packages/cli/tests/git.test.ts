@@ -53,7 +53,7 @@ describe('gitCommit', () => {
   it('calls git commit with the message', async () => {
     mockGitMethods.commit = vi.fn().mockResolvedValue(undefined);
     await gitCommit('feat: test commit');
-    expect(mockGitMethods.commit).toHaveBeenCalledWith(['-m', 'feat: test commit']);
+    expect(mockGitMethods.commit).toHaveBeenCalledWith('feat: test commit');
   });
 });
 

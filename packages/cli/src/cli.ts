@@ -4,12 +4,12 @@ import { createProvider, formatApiError } from './providers/index.js';
 import { getStagedDiff, stageAllChanges, gitCommit, truncateDiff } from './git.js';
 import { buildMessages, buildMessagesWithFile } from './prompts.js';
 import { select, confirm, input } from '@inquirer/prompts';
-import { writeFileSync, readFileSync, unlinkSync, mkdtempSync } from 'fs';
+import { writeFileSync, readFileSync, rmSync, mkdtempSync } from 'fs';
 import { join } from 'path';
 import { execFileSync } from 'child_process';
 import os from 'os';
 
-export async function run(opts: CLIOpts & { [key: string]: any }) {
+export async function run(opts: CLIOpts & Record<string, unknown>) {
   // 1. Load config
   const config = await loadConfig(opts, undefined, (msg) => process.stderr.write(`${msg}\n`));
 
@@ -128,8 +128,7 @@ export async function run(opts: CLIOpts & { [key: string]: any }) {
         message = readFileSync(tmpFile, 'utf-8').trim();
         // Cleanup
         try {
-          unlinkSync(tmpFile);
-          os.rmdirSync(tmpDir);
+          rmSync(tmpDir, { recursive: true, force: true });
         } catch { /* ignore cleanup errors */ }
 
         if (!message) {

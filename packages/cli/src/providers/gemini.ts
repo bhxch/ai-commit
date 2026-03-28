@@ -27,6 +27,9 @@ export class GeminiProvider implements AIProvider {
 
     // Build history from non-system messages, excluding the last user message
     const history: Array<{ role: string; parts: Array<{ text: string }> }> = [];
+    if (nonSystemMessages.length === 0) {
+      throw new Error('No user message provided to Gemini provider');
+    }
     const lastMessage = nonSystemMessages[nonSystemMessages.length - 1];
     const historyMessages = nonSystemMessages.slice(0, -1);
 

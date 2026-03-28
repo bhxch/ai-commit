@@ -140,7 +140,7 @@ export async function loadConfig(
     const fileVal = getNestedValue(fileConfig as unknown as Record<string, unknown>, mapping.path);
     if (fileVal !== undefined) {
       const key = mapping.path.join('.');
-      if (!envValues[key]) {
+      if (!(key in envValues)) {
         envValues[key] = fileVal;
       }
     }
@@ -151,7 +151,7 @@ export async function loadConfig(
     if (path.length === 1) {
       const k = path[0] as keyof ResolvedConfig;
       if (k in result) {
-        (result as Record<string, unknown>)[k] = value;
+        (result as unknown as Record<string, unknown>)[k] = value;
       }
     } else if (path.length === 2) {
       const section = path[0] as 'openai' | 'gemini' | 'anthropic';
@@ -185,7 +185,11 @@ export async function loadConfig(
   if (cliOpts.all !== undefined) result.all = cliOpts.all;
 
   // Parse numeric/boolean env values
-  result.temperature = parseNumber(result.temperature) ?? DEFAULTS.temperature;
+  const parsedTemp = parseNumber(result.temperature);
+  if (result.temperature !== undefined && parsedTemp === undefined && onWarning) {
+    onWarning(`[warning] Invalid temperature value "${result.temperature}", using default ${DEFAULTS.temperature}.`);
+  }
+  result.temperature = parsedTemp ?? DEFAULTS.temperature;
   result.stagedOnly = parseBoolean(result.stagedOnly) ?? DEFAULTS.stagedOnly;
   result.gitmoji = parseBoolean(result.gitmoji) ?? DEFAULTS.gitmoji;
   result.dryRun = parseBoolean(result.dryRun) ?? DEFAULTS.dryRun;
