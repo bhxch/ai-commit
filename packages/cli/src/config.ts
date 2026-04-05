@@ -115,6 +115,7 @@ export async function loadConfig(
 
   // Layer 4: Environment variables (primary + fallback)
   const envValues: Record<string, unknown> = {};
+  const fallbackWarnings: { primary: string; fallback: string; section: string }[] = [];
   for (const [, mapping] of Object.entries(ENV_VAR_MAP)) {
     const primaryVal = process.env[mapping.primary];
     if (primaryVal !== undefined) {
@@ -123,10 +124,12 @@ export async function loadConfig(
       const fallbackVal = process.env[mapping.fallback];
       if (fallbackVal !== undefined) {
         envValues[mapping.path.join('.')] = fallbackVal;
-        if (!suppressWarning && onWarning) {
-          onWarning(
-            `[warning] Using deprecated env var "${mapping.fallback}", please use "${mapping.primary}" instead.`,
-          );
+        if (!suppressWarning) {
+          fallbackWarnings.push({
+            primary: mapping.primary,
+            fallback: mapping.fallback,
+            section: mapping.path[0],
+          });
         }
       }
     }
@@ -195,6 +198,19 @@ export async function loadConfig(
   result.dryRun = parseBoolean(result.dryRun) ?? DEFAULTS.dryRun;
   result.yes = parseBoolean(result.yes) ?? DEFAULTS.yes;
   result.all = parseBoolean(result.all) ?? DEFAULTS.all;
+
+  // Emit fallback warnings only for the active provider
+  if (onWarning && fallbackWarnings.length > 0) {
+    for (const w of fallbackWarnings) {
+      // Only warn for non-provider-specific keys or keys matching the active provider
+      const providerSections = new Set<string>(['provider', 'model', 'temperature', 'language', 'prefix', 'promptFile', 'stagedOnly', 'gitmoji', 'suppressFallbackWarning']);
+      if (providerSections.has(w.section) || w.section === result.provider) {
+        onWarning(
+          `[warning] Using deprecated env var "${w.fallback}", please use "${w.primary}" instead.`,
+        );
+      }
+    }
+  }
 
   return result;
 }
