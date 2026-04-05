@@ -51,7 +51,7 @@ packages/cli/
 - Create: `packages/cli/.gitignore`
 - Create: `packages/cli/src/types.ts`
 
-- [ ] **Step 1: Create `packages/cli/package.json`**
+- [x] **Step 1: Create `packages/cli/package.json`**
 
 ```json
 {
@@ -92,7 +92,7 @@ packages/cli/
 }
 ```
 
-- [ ] **Step 2: Create `packages/cli/tsconfig.json`**
+- [x] **Step 2: Create `packages/cli/tsconfig.json`**
 
 ```json
 {
@@ -114,7 +114,7 @@ packages/cli/
 }
 ```
 
-- [ ] **Step 3: Create `packages/cli/tsup.config.ts`**
+- [x] **Step 3: Create `packages/cli/tsup.config.ts`**
 
 ```typescript
 import { defineConfig } from 'tsup';
@@ -131,7 +131,7 @@ export default defineConfig({
 });
 ```
 
-- [ ] **Step 4: Create `packages/cli/vitest.config.ts`**
+- [x] **Step 4: Create `packages/cli/vitest.config.ts`**
 
 ```typescript
 import { defineConfig } from 'vitest/config';
@@ -143,7 +143,7 @@ export default defineConfig({
 });
 ```
 
-- [ ] **Step 5: Create `packages/cli/.gitignore`**
+- [x] **Step 5: Create `packages/cli/.gitignore`**
 
 ```
 node_modules/
@@ -151,7 +151,7 @@ dist/
 *.tsbuildinfo
 ```
 
-- [ ] **Step 6: Create `packages/cli/src/types.ts`**
+- [x] **Step 6: Create `packages/cli/src/types.ts`**
 
 ```typescript
 export interface Message {
@@ -222,19 +222,19 @@ export interface RawConfigFile {
 }
 ```
 
-- [ ] **Step 7: Create minimal `packages/cli/src/index.ts` (entry placeholder)**
+- [x] **Step 7: Create minimal `packages/cli/src/index.ts` (entry placeholder)**
 
 ```typescript
 #!/usr/bin/env node
 console.log('aicommit');
 ```
 
-- [ ] **Step 8: Install dependencies and verify build**
+- [x] **Step 8: Install dependencies and verify build**
 
 Run: `cd packages/cli && npm install && npm run build`
 Expected: Build succeeds, `dist/index.js` exists
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add packages/cli/
@@ -252,7 +252,7 @@ git commit -m "chore(cli): scaffold project structure with package.json, tsconfi
 Reference: Spec sections "配置管理", "环境变量", "Fallback Warning 控制"
 Reference: `ai-commit-ext/src/config.ts` for config pattern
 
-- [ ] **Step 1: Write tests for config loading**
+- [x] **Step 1: Write tests for config loading**
 
 Create `packages/cli/tests/config.test.ts`:
 
@@ -379,12 +379,12 @@ describe('loadConfig', () => {
 });
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `cd packages/cli && npx vitest run tests/config.test.ts`
 Expected: FAIL — `../src/config.js` not found
 
-- [ ] **Step 3: Implement `packages/cli/src/config.ts`**
+- [x] **Step 3: Implement `packages/cli/src/config.ts`**
 
 ```typescript
 import { readFileSync, existsSync } from 'fs';
@@ -601,12 +601,12 @@ export async function loadConfig(
 }
 ```
 
-- [ ] **Step 4: Run tests**
+- [x] **Step 4: Run tests**
 
 Run: `cd packages/cli && npx vitest run tests/config.test.ts`
 Expected: All tests PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add packages/cli/src/config.ts packages/cli/tests/config.test.ts
@@ -623,7 +623,7 @@ git commit -m "feat(cli): add config module with 4-layer priority loading and en
 
 Reference: `ai-commit-ext/src/prompts.ts`, `ai-commit-ext/prompt/with_gitmoji.md`, `ai-commit-ext/prompt/without_gitmoji.md`
 
-- [ ] **Step 1: Write tests for prompt generation**
+- [x] **Step 1: Write tests for prompt generation**
 
 Create `packages/cli/tests/prompts.test.ts`:
 
@@ -690,12 +690,12 @@ describe('buildMessagesWithFile', () => {
 });
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `cd packages/cli && npx vitest run tests/prompts.test.ts`
 Expected: FAIL
 
-- [ ] **Step 3: Implement `packages/cli/src/prompts.ts`**
+- [x] **Step 3: Implement `packages/cli/src/prompts.ts`**
 
 Port the prompt template from `ai-commit-ext/src/prompts.ts` `INIT_MAIN_PROMPT` function. Provide two variants: one with gitmoji (emoji prefix in format), one without. The template should contain:
 - Role definition
@@ -708,12 +708,12 @@ Port the prompt template from `ai-commit-ext/src/prompts.ts` `INIT_MAIN_PROMPT` 
 
 Also implement `buildMessagesWithFile()` that reads a custom `.md` file and uses it as the system prompt.
 
-- [ ] **Step 4: Run tests**
+- [x] **Step 4: Run tests**
 
 Run: `cd packages/cli && npx vitest run tests/prompts.test.ts`
 Expected: All tests PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add packages/cli/src/prompts.ts packages/cli/tests/prompts.test.ts
@@ -734,7 +734,7 @@ git commit -m "feat(cli): add prompt templates with gitmoji toggle and custom pr
 Reference: `ai-commit-ext/src/openai-utils.ts`, `ai-commit-ext/src/gemini-utils.ts`
 Reference: Spec section "AI Provider 架构"
 
-- [ ] **Step 1: Write tests for provider factory and error handling**
+- [x] **Step 1: Write tests for provider factory and error handling**
 
 Create `packages/cli/tests/providers.test.ts`:
 
@@ -831,28 +831,28 @@ describe('formatApiError', () => {
 });
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `cd packages/cli && npx vitest run tests/providers.test.ts`
 Expected: FAIL
 
-- [ ] **Step 3: Implement `packages/cli/src/providers/openai.ts`**
+- [x] **Step 3: Implement `packages/cli/src/providers/openai.ts`**
 
 Create OpenAI-compatible provider using `openai` SDK v4. Support `baseUrl` for Azure/DeepSeek/Ollama. When `apiVersion` is set, add `defaultQuery` and `defaultHeaders` for Azure compatibility. Map `Message[]` to OpenAI `ChatCompletionMessageParam[]`.
 
 Reference: `ai-commit-ext/src/openai-utils.ts` for the Azure config pattern and API call structure.
 
-- [ ] **Step 4: Implement `packages/cli/src/providers/gemini.ts`**
+- [x] **Step 4: Implement `packages/cli/src/providers/gemini.ts`**
 
 Create Gemini provider using `@google/generative-ai`. Support `baseUrl` via `requestOptions`. Map `Message[]` by extracting `content` from each message (Gemini SDK uses `sendMessage` with string array). Apply `temperature` via `generationConfig`.
 
 Reference: `ai-commit-ext/src/gemini-utils.ts` for the chat session pattern.
 
-- [ ] **Step 5: Implement `packages/cli/src/providers/anthropic.ts`**
+- [x] **Step 5: Implement `packages/cli/src/providers/anthropic.ts`**
 
 Create Anthropic provider using `@anthropic-ai/sdk`. Support `baseUrl`. Map `Message[]` to Anthropic format (system as separate param, user/assistant messages). Apply `temperature` and `max_tokens`.
 
-- [ ] **Step 6: Implement `packages/cli/src/providers/index.ts`**
+- [x] **Step 6: Implement `packages/cli/src/providers/index.ts`**
 
 ```typescript
 export { OpenAIProvider } from './openai.js';
@@ -865,12 +865,12 @@ export function formatApiError(error: unknown, provider: string): string { ... }
 
 Factory validates API key exists for the selected provider, throws descriptive error if missing. `formatApiError` classifies by HTTP status code.
 
-- [ ] **Step 7: Run tests**
+- [x] **Step 7: Run tests**
 
 Run: `cd packages/cli && npx vitest run tests/providers.test.ts`
 Expected: All tests PASS
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add packages/cli/src/providers/
@@ -887,7 +887,7 @@ git commit -m "feat(cli): add AI providers (OpenAI, Gemini, Anthropic) with fact
 
 Reference: `ai-commit-ext/src/git-utils.ts`
 
-- [ ] **Step 1: Write tests for git operations**
+- [x] **Step 1: Write tests for git operations**
 
 Create `packages/cli/tests/git.test.ts`:
 
@@ -974,12 +974,12 @@ describe('truncateDiff', () => {
 });
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `cd packages/cli && npx vitest run tests/git.test.ts`
 Expected: FAIL
 
-- [ ] **Step 3: Implement `packages/cli/src/git.ts`**
+- [x] **Step 3: Implement `packages/cli/src/git.ts`**
 
 Implement using `simple-git`:
 - `getStagedDiff()`: execute `git diff --staged`, return diff string
@@ -989,12 +989,12 @@ Implement using `simple-git`:
 
 Reference: `ai-commit-ext/src/git-utils.ts` for the `simpleGit` pattern.
 
-- [ ] **Step 4: Run tests**
+- [x] **Step 4: Run tests**
 
 Run: `cd packages/cli && npx vitest run tests/git.test.ts`
 Expected: All tests PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add packages/cli/src/git.ts packages/cli/tests/git.test.ts
@@ -1011,7 +1011,7 @@ git commit -m "feat(cli): add git operations module with diff truncation"
 
 Reference: Spec section "主流程"
 
-- [ ] **Step 1: Implement `packages/cli/src/cli.ts`**
+- [x] **Step 1: Implement `packages/cli/src/cli.ts`**
 
 Main orchestration function `run(cliOpts)`:
 
@@ -1038,7 +1038,7 @@ Main orchestration function `run(cliOpts)`:
 
 Error handling: wrap in try/catch, print `formatApiError()` to stderr, exit code 1.
 
-- [ ] **Step 2: Implement `packages/cli/src/index.ts`**
+- [x] **Step 2: Implement `packages/cli/src/index.ts`**
 
 ```typescript
 #!/usr/bin/env node
@@ -1075,17 +1075,17 @@ program
 program.parse();
 ```
 
-- [ ] **Step 3: Build and verify**
+- [x] **Step 3: Build and verify**
 
 Run: `cd packages/cli && npm run build`
 Expected: Build succeeds
 
-- [ ] **Step 4: Test `--help`**
+- [x] **Step 4: Test `--help`**
 
 Run: `cd packages/cli && node dist/index.js --help`
 Expected: Shows help text with all options
 
-- [ ] **Step 5: Test `--dry-run` in a real git repo**
+- [x] **Step 5: Test `--dry-run` in a real git repo** (requires manual API key)
 
 Create a test repo with staged changes, set API key, run:
 ```bash
@@ -1095,7 +1095,7 @@ AICOMMIT_OPENAI_API_KEY=sk-xxx node /path/to/packages/cli/dist/index.js --dry-ru
 ```
 Expected: Attempts to call API (will fail without valid key, but flow is correct)
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add packages/cli/src/cli.ts packages/cli/src/index.ts
@@ -1109,17 +1109,17 @@ git commit -m "feat(cli): add main CLI flow with commander, interactive prompts,
 **Files:**
 - Modify: `packages/cli/package.json` (if needed)
 
-- [ ] **Step 1: Run all tests**
+- [x] **Step 1: Run all tests**
 
 Run: `cd packages/cli && npx vitest run`
 Expected: All tests PASS
 
-- [ ] **Step 2: Test `--all` and `--staged-only` mutual exclusion**
+- [x] **Step 2: Test `--all` and `--staged-only` mutual exclusion**
 
 Run: `cd packages/cli && node dist/index.js --all --staged-only`
 Expected: Error message about mutual exclusion
 
-- [ ] **Step 3: Test no staged changes default behavior**
+- [x] **Step 3: Test no staged changes default behavior** (requires manual API key)
 
 Run in a clean git repo with no changes:
 ```bash
@@ -1127,7 +1127,7 @@ cd packages/cli && node dist/index.js
 ```
 Expected: Message about no staged changes, prompt to add all
 
-- [ ] **Step 4: Test `--prefix` formatting**
+- [x] **Step 4: Test `--prefix` formatting** (requires manual API key)
 
 Run with a valid API key and staged changes:
 ```bash
@@ -1135,7 +1135,7 @@ node dist/index.js --dry-run --prefix "PROJ-123"
 ```
 Expected: Output starts with `PROJ-123 ` followed by commit message
 
-- [ ] **Step 5: Test fallback warning**
+- [x] **Step 5: Test fallback warning**
 
 Run without `AICOMMIT_` prefix, only `OPENAI_API_KEY`:
 ```bash
@@ -1143,7 +1143,7 @@ OPENAI_API_KEY=sk-test node dist/index.js --dry-run
 ```
 Expected: Warning about deprecated env var
 
-- [ ] **Step 6: Test warning suppression**
+- [x] **Step 6: Test warning suppression**
 
 Run with `AICOMMIT_SUPPRESS_FALLBACK_WARNING=true`:
 ```bash
@@ -1151,7 +1151,7 @@ AICOMMIT_SUPPRESS_FALLBACK_WARNING=true OPENAI_API_KEY=sk-test node dist/index.j
 ```
 Expected: No warning output
 
-- [ ] **Step 7: Final commit**
+- [x] **Step 7: Final commit** (fixes committed individually)
 
 ```bash
 git add -A
