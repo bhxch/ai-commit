@@ -6,7 +6,7 @@ const program = new Command();
 program
   .name('aicommit')
   .description('AI-powered conventional commit message generator')
-  .version('0.1.0')
+  .version('1.0.0')
   .option('-y, --yes', 'skip confirmation, commit directly')
   .option('--prefix <text>', 'prepend text to commit message')
   .option('-a, --all', 'stage all changes before committing')
