@@ -73,6 +73,7 @@ The tool reads your staged diff, sends it to an AI model, and presents the gener
 | `--provider <provider>` | AI provider: `openai`, `gemini`, `anthropic` |
 | `--model <model>` | Model name (e.g. `gpt-4o`, `gemini-2.0-flash`) |
 | `--temperature <number>` | Sampling temperature, 0–2 (default: `0.7`) |
+| `--thinking` | Enable AI model thinking/reasoning mode (default: off) |
 
 ### Examples
 
@@ -120,6 +121,7 @@ Create `.aicommitrc.json` in your project root or home directory:
   "temperature": 0.7,
   "language": "English",
   "gitmoji": true,
+  "thinking": false,
   "prefix": "",
   "promptFile": "",
   "openai": {
@@ -156,6 +158,7 @@ Create `.aicommitrc.json` in your project root or home directory:
 | `AICOMMIT_PREFIX` | Default prefix |
 | `AICOMMIT_PROMPT_FILE` | Custom prompt file path |
 | `AICOMMIT_GITMOJI` | Enable gitmoji (`true`/`false`) |
+| `AICOMMIT_THINKING` | Enable thinking mode (`true`/`false`) |
 | `AICOMMIT_STAGED_ONLY` | Only use staged changes (`true`/`false`) |
 
 > **Note:** The tool also reads standard env vars like `OPENAI_API_KEY`, `GEMINI_API_KEY`, and `ANTHROPIC_API_KEY` as fallbacks (with a warning). Prefer the `AICOMMIT_*` prefixed versions.

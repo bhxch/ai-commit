@@ -73,6 +73,7 @@ aicommit
 | `--provider <provider>` | AI 提供商：`openai`、`gemini`、`anthropic` |
 | `--model <model>` | 模型名称（如 `gpt-4o`、`gemini-2.0-flash`） |
 | `--temperature <number>` | 采样温度，0–2（默认：`0.7`） |
+| `--thinking` | 启用 AI 模型推理模式（默认关闭） |
 
 ### 示例
 
@@ -120,6 +121,7 @@ aicommit --prefix "PROJ-123"
   "temperature": 0.7,
   "language": "English",
   "gitmoji": true,
+  "thinking": false,
   "prefix": "",
   "promptFile": "",
   "openai": {
@@ -156,6 +158,7 @@ aicommit --prefix "PROJ-123"
 | `AICOMMIT_PREFIX` | 默认前缀 |
 | `AICOMMIT_PROMPT_FILE` | 自定义提示词文件路径 |
 | `AICOMMIT_GITMOJI` | 是否启用 gitmoji（`true`/`false`） |
+| `AICOMMIT_THINKING` | 启用推理模式（`true`/`false`） |
 | `AICOMMIT_STAGED_ONLY` | 仅使用已暂存的变更（`true`/`false`） |
 
 > **注意：** 工具也会读取 `OPENAI_API_KEY`、`GEMINI_API_KEY`、`ANTHROPIC_API_KEY` 等标准环境变量作为回退（会输出警告）。建议优先使用 `AICOMMIT_*` 前缀的版本。

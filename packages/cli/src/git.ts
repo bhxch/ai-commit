@@ -25,3 +25,5 @@ export function truncateDiff(diff: string, maxLines: number = 10000): { diff: st
   const warning = `[warning] Diff is too large (${lines.length} lines), truncated to ${maxLines} lines. This may affect generation quality. Consider committing in smaller batches.`;
   return { diff: truncated, warning };
 }
+// test1
+// test2
