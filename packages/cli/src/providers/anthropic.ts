@@ -21,18 +21,24 @@ export class AnthropicProvider implements AIProvider {
     const systemMsg = messages.find(m => m.role === 'system')?.content || '';
     const chatMessages = messages.filter(m => m.role !== 'system');
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const response = await this.client.messages.create({
       model: options.model,
-      max_tokens: 4096,
-      temperature: options.temperature,
+      max_tokens: options.thinking ? 16000 : 4096,
       system: systemMsg,
       messages: chatMessages.map(m => ({
         role: m.role as 'user' | 'assistant',
         content: m.content,
       })),
-    });
+      ...(options.thinking
+        ? { thinking: { type: 'enabled' as const, budget_tokens: 10000 } }
+        : { temperature: options.temperature }),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any);
 
     const textBlock = response.content.find(b => b.type === 'text');
-    return textBlock ? textBlock.text : '';
+    let content = textBlock ? textBlock.text : '';
+    content = content.replace(/<think[^>]*>([\s\S]*?)<\/think[^>]*>/gi, '').trim();
+    return content;
   }
 }

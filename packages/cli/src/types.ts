@@ -6,6 +6,7 @@ export interface Message {
 export interface GenerateOptions {
   model: string;
   temperature: number;
+  thinking: boolean;
 }
 
 export interface AIProvider {
@@ -25,6 +26,7 @@ export interface ResolvedConfig {
   yes: boolean;
   all: boolean;
   context: string | undefined;
+  thinking: boolean;
   openai: {
     apiKey: string;
     baseUrl: string;
@@ -53,6 +55,7 @@ export interface CLIOpts {
   all?: boolean;
   dryRun?: boolean;
   yes?: boolean;
+  thinking?: boolean;
 }
 
 export interface RawConfigFile {
@@ -64,6 +67,7 @@ export interface RawConfigFile {
   promptFile?: string;
   stagedOnly?: boolean;
   gitmoji?: boolean;
+  thinking?: boolean;
   suppressFallbackWarning?: boolean;
   openai?: {
     apiKey?: string;

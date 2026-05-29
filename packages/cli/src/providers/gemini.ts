@@ -40,13 +40,20 @@ export class GeminiProvider implements AIProvider {
       });
     }
 
+    const genConfig: Record<string, unknown> = { temperature: options.temperature };
+    if (options.thinking) {
+      genConfig.thinkingBudget = 8000;
+    }
+
     const chat = model.startChat({
       history,
-      generationConfig: { temperature: options.temperature },
+      generationConfig: genConfig,
     });
 
     // Send the last message
     const result = await chat.sendMessage(lastMessage.content);
-    return result.response.text();
+    let content = result.response.text();
+    content = content.replace(/<think[^>]*>([\s\S]*?)<\/think[^>]*>/gi, '').trim();
+    return content;
   }
 }

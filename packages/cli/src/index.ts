@@ -19,6 +19,7 @@ program
   .option('--model <model>', 'AI model name')
   .option('--temperature <number>', 'temperature (0-2)', parseFloat)
   .option('--dry-run', 'generate message without committing')
+  .option('--thinking', 'enable AI model thinking/reasoning mode')
   .action(async (opts) => {
     try {
       await run(opts);

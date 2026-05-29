@@ -31,6 +31,8 @@ export class OpenAIProvider implements AIProvider {
       messages: messages as OpenAI.ChatCompletionMessageParam[],
       temperature: options.temperature,
     });
-    return completion.choices[0]?.message?.content || '';
+    let content = completion.choices[0]?.message?.content || '';
+    content = content.replace(/<think[^>]*>([\s\S]*?)<\/think[^>]*>/gi, '').trim();
+    return content;
   }
 }

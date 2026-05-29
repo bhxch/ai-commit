@@ -74,6 +74,7 @@ export async function run(opts: CLIOpts & Record<string, unknown>) {
       result = await provider.generate(messages, {
         model: config.model,
         temperature: config.temperature,
+        thinking: config.thinking,
       });
     } catch (err) {
       throw new Error(`API error: ${formatApiError(err, config.provider)}`);

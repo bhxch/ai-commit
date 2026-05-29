@@ -12,6 +12,7 @@ const ENV_VAR_MAP: Record<string, { primary: string; fallback?: string; path: st
   promptFile: { primary: 'AICOMMIT_PROMPT_FILE', path: ['promptFile'] },
   stagedOnly: { primary: 'AICOMMIT_STAGED_ONLY', path: ['stagedOnly'] },
   gitmoji: { primary: 'AICOMMIT_GITMOJI', path: ['gitmoji'] },
+  thinking: { primary: 'AICOMMIT_THINKING', path: ['thinking'] },
   suppressFallbackWarning: { primary: 'AICOMMIT_SUPPRESS_FALLBACK_WARNING', path: ['suppressFallbackWarning'] },
   openai_apiKey: { primary: 'AICOMMIT_OPENAI_API_KEY', fallback: 'OPENAI_API_KEY', path: ['openai', 'apiKey'] },
   openai_baseUrl: { primary: 'AICOMMIT_OPENAI_BASE_URL', fallback: 'OPENAI_BASE_URL', path: ['openai', 'baseUrl'] },
@@ -35,6 +36,7 @@ const DEFAULTS: ResolvedConfig = {
   yes: false,
   all: false,
   context: undefined,
+  thinking: false,
   openai: { apiKey: '', baseUrl: '', apiVersion: '' },
   gemini: { apiKey: '', baseUrl: '' },
   anthropic: { apiKey: '', baseUrl: '' },
@@ -186,6 +188,7 @@ export async function loadConfig(
   if (cliOpts.dryRun !== undefined) result.dryRun = cliOpts.dryRun;
   if (cliOpts.yes !== undefined) result.yes = cliOpts.yes;
   if (cliOpts.all !== undefined) result.all = cliOpts.all;
+  if (cliOpts.thinking !== undefined) result.thinking = cliOpts.thinking;
 
   // Parse numeric/boolean env values
   const parsedTemp = parseNumber(result.temperature);
@@ -198,6 +201,7 @@ export async function loadConfig(
   result.dryRun = parseBoolean(result.dryRun) ?? DEFAULTS.dryRun;
   result.yes = parseBoolean(result.yes) ?? DEFAULTS.yes;
   result.all = parseBoolean(result.all) ?? DEFAULTS.all;
+  result.thinking = parseBoolean(result.thinking) ?? DEFAULTS.thinking;
 
   // Emit fallback warnings only for the active provider
   if (onWarning && fallbackWarnings.length > 0) {
