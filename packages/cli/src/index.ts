@@ -1,12 +1,22 @@
 import { Command } from 'commander';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 import { run } from './cli.js';
+
+// Single source of truth: read the version from package.json at runtime.
+// Resolves to <pkg-root>/package.json both in dev (tsx, src/) and in the
+// published bundle (dist/); npm always ships package.json at the package root.
+const pkgVersion = JSON.parse(
+  readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'package.json'), 'utf-8'),
+).version as string;
 
 const program = new Command();
 
 program
   .name('aicommit')
   .description('AI-powered conventional commit message generator')
-  .version('1.0.0')
+  .version(pkgVersion)
   .option('-y, --yes', 'skip confirmation, commit directly')
   .option('--prefix <text>', 'prepend text to commit message')
   .option('-a, --all', 'stage all changes before committing')
