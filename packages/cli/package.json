@@ -4,14 +4,14 @@
   "description": "AI-powered conventional commit message generator for the terminal",
   "type": "module",
   "bin": {
-    "aicommit": "./dist/index.js"
+    "aicommit": "dist/index.js"
   },
   "files": [
     "dist"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/bhxch/ai-commit"
+    "url": "git+https://github.com/bhxch/ai-commit.git"
   },
   "engines": {
     "node": ">=18"
