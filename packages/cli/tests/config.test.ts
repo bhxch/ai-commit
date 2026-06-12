@@ -16,6 +16,7 @@ const AICOMMIT_ENV_KEYS = [
   'OPENAI_API_KEY', 'OPENAI_BASE_URL', 'AZURE_API_VERSION',
   'GEMINI_API_KEY', 'GEMINI_BASE_URL',
   'ANTHROPIC_API_KEY', 'ANTHROPIC_BASE_URL',
+  'AICOMMIT_PROXY', 'AICOMMIT_NO_PROXY', 'HTTPS_PROXY', 'HTTP_PROXY',
 ];
 let savedEnv: Record<string, string | undefined> = {};
 
@@ -141,5 +142,89 @@ describe('loadConfig', () => {
     } finally {
       delete process.env.AICOMMIT_PROVIDER;
     }
+  });
+
+  it('proxy: AICOMMIT_PROXY beats config and standard env', async () => {
+    process.env.AICOMMIT_PROXY = 'http://aicommit:8080';
+    process.env.HTTPS_PROXY = 'http://standard:8080';
+    const rcPath = join(TEST_DIR, '.aicommitrc.json');
+    writeConfigFile(rcPath, { proxy: 'http://config:8080' });
+    try {
+      const config = await loadConfig({}, TEST_DIR);
+      expect(config.proxy).toBe('http://aicommit:8080');
+      expect(config.noProxy).toBe(false);
+    } finally {
+      delete process.env.AICOMMIT_PROXY;
+      delete process.env.HTTPS_PROXY;
+    }
+  });
+
+  it('proxy: config beats standard env when AICOMMIT_PROXY unset', async () => {
+    process.env.HTTPS_PROXY = 'http://standard:8080';
+    const rcPath = join(TEST_DIR, '.aicommitrc.json');
+    writeConfigFile(rcPath, { proxy: 'http://config:8080' });
+    try {
+      const config = await loadConfig({}, TEST_DIR);
+      expect(config.proxy).toBe('http://config:8080');
+    } finally {
+      delete process.env.HTTPS_PROXY;
+    }
+  });
+
+  it('proxy: falls back to standard HTTPS_PROXY then HTTP_PROXY', async () => {
+    process.env.HTTPS_PROXY = 'http://https-env:8080';
+    process.env.HTTP_PROXY = 'http://http-env:8080';
+    try {
+      let config = await loadConfig({});
+      expect(config.proxy).toBe('http://https-env:8080'); // HTTPS_PROXY wins over HTTP_PROXY
+      delete process.env.HTTPS_PROXY;
+      config = await loadConfig({});
+      expect(config.proxy).toBe('http://http-env:8080');
+    } finally {
+      delete process.env.HTTPS_PROXY;
+      delete process.env.HTTP_PROXY;
+    }
+  });
+
+  it('proxy: CLI --proxy takes highest precedence', async () => {
+    process.env.AICOMMIT_PROXY = 'http://env:8080';
+    try {
+      const config = await loadConfig({ proxy: 'http://cli:8080' });
+      expect(config.proxy).toBe('http://cli:8080');
+    } finally {
+      delete process.env.AICOMMIT_PROXY;
+    }
+  });
+
+  it('noProxy kill switch via AICOMMIT_NO_PROXY ignores a set HTTPS_PROXY', async () => {
+    process.env.HTTPS_PROXY = 'http://standard:8080';
+    process.env.AICOMMIT_NO_PROXY = 'true';
+    try {
+      const config = await loadConfig({});
+      expect(config.noProxy).toBe(true);
+      // URL is still resolved; noProxy is applied at proxy-application time
+      expect(config.proxy).toBe('http://standard:8080');
+    } finally {
+      delete process.env.HTTPS_PROXY;
+      delete process.env.AICOMMIT_NO_PROXY;
+    }
+  });
+
+  it('noProxy: CLI --no-proxy (proxy === false) forces direct even with HTTPS_PROXY', async () => {
+    process.env.HTTPS_PROXY = 'http://standard:8080';
+    try {
+      const config = await loadConfig({ proxy: false });
+      expect(config.noProxy).toBe(true);
+    } finally {
+      delete process.env.HTTPS_PROXY;
+    }
+  });
+
+  it('reads proxy and noProxy from config file', async () => {
+    const rcPath = join(TEST_DIR, '.aicommitrc.json');
+    writeConfigFile(rcPath, { proxy: 'http://config:8080', noProxy: true });
+    const config = await loadConfig({}, TEST_DIR);
+    expect(config.proxy).toBe('http://config:8080');
+    expect(config.noProxy).toBe(true);
   });
 });

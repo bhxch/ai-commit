@@ -74,6 +74,8 @@ The tool reads your staged diff, sends it to an AI model, and presents the gener
 | `--model <model>` | Model name (e.g. `gpt-4o`, `gemini-2.0-flash`) |
 | `--temperature <number>` | Sampling temperature, 0–2 (default: `0.7`) |
 | `--thinking` | Enable AI model thinking/reasoning mode (default: off) |
+| `--proxy <url>` | Route API requests through an HTTP(S) proxy |
+| `--no-proxy` | Ignore proxy settings and connect directly |
 
 ### Examples
 
@@ -160,8 +162,50 @@ Create `.aicommitrc.json` in your project root or home directory:
 | `AICOMMIT_GITMOJI` | Enable gitmoji (`true`/`false`) |
 | `AICOMMIT_THINKING` | Enable thinking mode (`true`/`false`) |
 | `AICOMMIT_STAGED_ONLY` | Only use staged changes (`true`/`false`) |
+| `AICOMMIT_PROXY` | HTTP(S) proxy URL (falls back to `HTTPS_PROXY`/`HTTP_PROXY`) |
+| `AICOMMIT_NO_PROXY` | When `true`, ignore proxy and connect directly (kill switch) |
 
 > **Note:** The tool also reads standard env vars like `OPENAI_API_KEY`, `GEMINI_API_KEY`, and `ANTHROPIC_API_KEY` as fallbacks (with a warning). Prefer the `AICOMMIT_*` prefixed versions.
+
+### HTTP Proxy
+
+aicommit can route API requests through an HTTP(S) proxy — useful behind a corporate proxy or when the API is not directly reachable.
+
+**Resolution priority (highest first):**
+
+1. **CLI args**: `--proxy <url>` / `--no-proxy`
+2. **`AICOMMIT_*` env var**: `AICOMMIT_PROXY`
+3. **Config file**: `proxy` in `.aicommitrc.json`
+4. **Standard env vars (auto fallback)**: `HTTPS_PROXY`, then `HTTP_PROXY`
+
+**Force direct (kill switch):** `--no-proxy`, `AICOMMIT_NO_PROXY=true`, or config `noProxy: true` ignores all proxy settings above and connects directly — even when `HTTPS_PROXY` is set.
+
+```bash
+# Set the proxy via an AICOMMIT_ env var
+export AICOMMIT_PROXY="http://127.0.0.1:7890"
+aicommit
+
+# Auto-fallback to standard env vars
+export HTTPS_PROXY="http://127.0.0.1:7890"
+aicommit
+
+# Ad-hoc via the CLI
+aicommit --proxy http://127.0.0.1:7890
+
+# Force a direct connection (ignore any configured proxy)
+aicommit --no-proxy
+```
+
+Config file example:
+
+```json
+{
+  "proxy": "http://127.0.0.1:7890",
+  "noProxy": false
+}
+```
+
+> **How it works:** when a proxy is enabled, aicommit replaces the process-wide `fetch` with undici's fetch and sets a `ProxyAgent`, so requests from all three providers (OpenAI, Gemini, Anthropic) are routed through the proxy.
 
 ### Custom Prompts
 

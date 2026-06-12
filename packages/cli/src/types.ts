@@ -27,6 +27,10 @@ export interface ResolvedConfig {
   all: boolean;
   context: string | undefined;
   thinking: boolean;
+  /** Resolved HTTP(S) proxy URL ('' = none). */
+  proxy: string;
+  /** When true, ignore proxy settings and connect directly. */
+  noProxy: boolean;
   openai: {
     apiKey: string;
     baseUrl: string;
@@ -56,6 +60,8 @@ export interface CLIOpts {
   dryRun?: boolean;
   yes?: boolean;
   thinking?: boolean;
+  /** Proxy URL, or `false` (from `--no-proxy`) to force a direct connection. */
+  proxy?: string | false;
 }
 
 export interface RawConfigFile {
@@ -69,6 +75,10 @@ export interface RawConfigFile {
   gitmoji?: boolean;
   thinking?: boolean;
   suppressFallbackWarning?: boolean;
+  /** HTTP(S) proxy URL. */
+  proxy?: string;
+  /** When true, ignore proxy settings and connect directly. */
+  noProxy?: boolean;
   openai?: {
     apiKey?: string;
     baseUrl?: string;

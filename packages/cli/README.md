@@ -74,6 +74,8 @@ aicommit
 | `--model <model>` | 模型名称（如 `gpt-4o`、`gemini-2.0-flash`） |
 | `--temperature <number>` | 采样温度，0–2（默认：`0.7`） |
 | `--thinking` | 启用 AI 模型推理模式（默认关闭） |
+| `--proxy <url>` | 通过指定的 HTTP(S) 代理路由 API 请求 |
+| `--no-proxy` | 忽略代理设置，强制直连 |
 
 ### 示例
 
@@ -160,8 +162,50 @@ aicommit --prefix "PROJ-123"
 | `AICOMMIT_GITMOJI` | 是否启用 gitmoji（`true`/`false`） |
 | `AICOMMIT_THINKING` | 启用推理模式（`true`/`false`） |
 | `AICOMMIT_STAGED_ONLY` | 仅使用已暂存的变更（`true`/`false`） |
+| `AICOMMIT_PROXY` | HTTP(S) 代理 URL（回退到 `HTTPS_PROXY`/`HTTP_PROXY`） |
+| `AICOMMIT_NO_PROXY` | 设为 `true` 时忽略代理并直连（kill switch） |
 
 > **注意：** 工具也会读取 `OPENAI_API_KEY`、`GEMINI_API_KEY`、`ANTHROPIC_API_KEY` 等标准环境变量作为回退（会输出警告）。建议优先使用 `AICOMMIT_*` 前缀的版本。
+
+### 代理（HTTP Proxy）
+
+aicommit 支持通过 HTTP(S) 代理发起 API 请求，适用于公司代理或无法直连 API 的网络环境。
+
+**解析优先级（从高到低）：**
+
+1. **CLI 参数**：`--proxy <url>` / `--no-proxy`
+2. **`AICOMMIT_*` 环境变量**：`AICOMMIT_PROXY`
+3. **配置文件**：`.aicommitrc.json` 中的 `proxy`
+4. **标准环境变量（自动回退）**：`HTTPS_PROXY`，其次 `HTTP_PROXY`
+
+**强制直连（kill switch）：** `--no-proxy`、`AICOMMIT_NO_PROXY=true` 或配置项 `noProxy: true` 会忽略上述全部代理设置并直连——即使设置了 `HTTPS_PROXY`。
+
+```bash
+# 用 AICOMMIT_ 环境变量指定代理
+export AICOMMIT_PROXY="http://127.0.0.1:7890"
+aicommit
+
+# 自动回退到标准环境变量
+export HTTPS_PROXY="http://127.0.0.1:7890"
+aicommit
+
+# 命令行临时指定
+aicommit --proxy http://127.0.0.1:7890
+
+# 强制直连（忽略已设置的代理）
+aicommit --no-proxy
+```
+
+配置文件示例：
+
+```json
+{
+  "proxy": "http://127.0.0.1:7890",
+  "noProxy": false
+}
+```
+
+> **实现说明：** 启用代理时，aicommit 会将进程全局的 `fetch` 替换为 undici 的 fetch 并设置 `ProxyAgent`，因此 OpenAI、Gemini、Anthropic 三个提供商的请求都会经代理转发。
 
 ### 自定义提示词
 

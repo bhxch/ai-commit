@@ -37,6 +37,8 @@ const DEFAULTS: ResolvedConfig = {
   all: false,
   context: undefined,
   thinking: false,
+  proxy: '',
+  noProxy: false,
   openai: { apiKey: '', baseUrl: '', apiVersion: '' },
   gemini: { apiKey: '', baseUrl: '' },
   anthropic: { apiKey: '', baseUrl: '' },
@@ -189,6 +191,21 @@ export async function loadConfig(
   if (cliOpts.yes !== undefined) result.yes = cliOpts.yes;
   if (cliOpts.all !== undefined) result.all = cliOpts.all;
   if (cliOpts.thinking !== undefined) result.thinking = cliOpts.thinking;
+
+  // Proxy resolution (dedicated priority, not via ENV_VAR_MAP).
+  // Force-direct kill switch: CLI --no-proxy > AICOMMIT_NO_PROXY > config.
+  // Proxy URL: CLI --proxy > AICOMMIT_PROXY > config > HTTPS_PROXY > HTTP_PROXY.
+  const cliNoProxy = cliOpts.proxy === false;
+  result.noProxy = Boolean(
+    cliNoProxy || parseBoolean(process.env.AICOMMIT_NO_PROXY) || parseBoolean(fileConfig.noProxy),
+  );
+  result.proxy =
+    (typeof cliOpts.proxy === 'string' ? cliOpts.proxy : undefined) ??
+    process.env.AICOMMIT_PROXY ??
+    fileConfig.proxy ??
+    process.env.HTTPS_PROXY ??
+    process.env.HTTP_PROXY ??
+    '';
 
   // Parse numeric/boolean env values
   const parsedTemp = parseNumber(result.temperature);

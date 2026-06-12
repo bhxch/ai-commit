@@ -1,4 +1,5 @@
 import { loadConfig } from './config.js';
+import { setupProxy } from './proxy.js';
 import type { CLIOpts } from './types.js';
 import { createProvider, formatApiError } from './providers/index.js';
 import { getStagedDiff, stageAllChanges, gitCommit, truncateDiff } from './git.js';
@@ -12,6 +13,9 @@ import os from 'os';
 export async function run(opts: CLIOpts & Record<string, unknown>) {
   // 1. Load config
   const config = await loadConfig(opts, undefined, (msg) => process.stderr.write(`${msg}\n`));
+
+  // Apply proxy (must run before any SDK client is constructed)
+  await setupProxy(config, (msg) => process.stderr.write(`${msg}\n`));
 
   // 2. Validate mutual exclusion: --all and --staged-only
   if (config.all && config.stagedOnly) {
