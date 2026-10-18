@@ -120,6 +120,16 @@ describe('AnthropicProvider thinking control', () => {
     },
   );
 
+  it('forwards custom effort values verbatim in effort mode', async () => {
+    const provider = new AnthropicProvider(makeConfig('anthropic'));
+    await provider.generate(
+      MESSAGES,
+      makeOptions({ thinking: true, thinkingLevel: 'ultra', thinkingMode: 'effort' }),
+    );
+    const args = mocks.anthropicCreate.mock.calls[0][0];
+    expect(args.output_config).toEqual({ effort: 'ultra' });
+  });
+
   it('never sends output_config when thinking is off', async () => {
     const provider = new AnthropicProvider(makeConfig('anthropic'));
     await provider.generate(

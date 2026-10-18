@@ -76,7 +76,7 @@ The tool reads your staged diff, sends it to an AI model, and presents the gener
 | `--temperature <number>` | Sampling temperature, 0–2 (default: `0.7`) |
 | `--thinking` | Enable AI model thinking/reasoning mode (default: off) |
 | `--thinking-level <level>` | Thinking depth low/medium/high/xhigh/max (default: `medium`) |
-| `--thinking-mode <mode>` | Anthropic level mechanism budget/effort (default: `budget`; effort passes through native `output_config.effort`, Opus 4.6+ only) |
+| `--thinking-mode <mode>` | Anthropic level mechanism budget/effort (default: `budget`; effort passes through native `output_config.effort`, Opus 4.6+ only, with `--thinking-level` forwarded verbatim without validation) |
 | `--proxy <url>` | Route API requests through an HTTP(S) proxy |
 | `--no-proxy` | Ignore proxy settings and connect directly |
 
@@ -299,7 +299,7 @@ Use `--thinking` to enable reasoning mode and `--thinking-level` to set the dept
 
 Notes:
 
-- **Anthropic**: pass `--thinking-mode effort` (or `AICOMMIT_THINKING_MODE=effort`) to send the native `output_config.effort` instead. This is only supported on Opus 4.6+ and newer; older models return a 400 error. The default `budget` mode works on every extended-thinking model (Sonnet 4.5 and later).
+- **Anthropic**: pass `--thinking-mode effort` (or `AICOMMIT_THINKING_MODE=effort`) to send the native `output_config.effort` instead. This is only supported on Opus 4.6+ and newer; older models return a 400 error. In effort mode `--thinking-level` is not validated and any non-empty string is forwarded verbatim. The default `budget` mode works on every extended-thinking model (Sonnet 4.5 and later).
 - **Gemini**: the `max` tier (32768) requires Gemini 2.5 Pro; Flash models cap at 24576 (`xhigh`).
 - **OpenAI**: `reasoning_effort` only applies to reasoning models (o-series, gpt-5 series, etc.); it is omitted when thinking is off.
 - While thinking is on, Anthropic and OpenAI requests omit `temperature` (both APIs reject or ignore non-default values in reasoning mode).

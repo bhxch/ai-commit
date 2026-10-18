@@ -44,7 +44,7 @@ export class GeminiProvider implements AIProvider {
           : {}),
         temperature: options.temperature,
         ...(options.thinking
-          ? { thinkingConfig: { thinkingBudget: THINKING_BUDGET[options.thinkingLevel] } }
+          ? { thinkingConfig: { thinkingBudget: THINKING_BUDGET[options.thinkingLevel as ThinkingLevel] } }
           : {}),
       },
       history: historyMessages.map(msg => ({

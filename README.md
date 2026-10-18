@@ -76,7 +76,7 @@ aicommit
 | `--temperature <number>` | 采样温度，0–2（默认：`0.7`） |
 | `--thinking` | 启用 AI 模型推理模式（默认关闭） |
 | `--thinking-level <level>` | 推理深度 low/medium/high/xhigh/max（默认 `medium`） |
-| `--thinking-mode <mode>` | Anthropic 程度传递机制 budget/effort（默认 `budget`；effort 直传原生 `output_config.effort`，仅 Opus 4.6+ 等新模型支持） |
+| `--thinking-mode <mode>` | Anthropic 程度传递机制 budget/effort（默认 `budget`；effort 直传原生 `output_config.effort`，仅 Opus 4.6+ 等新模型支持，且 `--thinking-level` 不校验、原样透传） |
 | `--proxy <url>` | 通过指定的 HTTP(S) 代理路由 API 请求 |
 | `--no-proxy` | 忽略代理设置，强制直连 |
 
@@ -299,7 +299,7 @@ aicommit --provider anthropic --model claude-sonnet-4-20250514
 
 注意事项：
 
-- **Anthropic** 可用 `--thinking-mode effort`（或 `AICOMMIT_THINKING_MODE=effort`）改为直传原生 `output_config.effort`，仅 Opus 4.6+ 等新模型支持，旧模型会返回 400；默认 `budget` 模式对所有支持 extended thinking 的模型（Sonnet 4.5 起）兼容。
+- **Anthropic** 可用 `--thinking-mode effort`（或 `AICOMMIT_THINKING_MODE=effort`）改为直传原生 `output_config.effort`，仅 Opus 4.6+ 等新模型支持，旧模型会返回 400；此时 `--thinking-level` 不做校验，任意非空字符串原样透传。默认 `budget` 模式对所有支持 extended thinking 的模型（Sonnet 4.5 起）兼容。
 - **Gemini** 的 `max` 挡（32768）需要 Gemini 2.5 Pro，Flash 系列上限为 24576（`xhigh`）。
 - **OpenAI** 的 `reasoning_effort` 仅推理模型（o 系列、gpt-5 系列等）支持；关闭思考时不会发送该参数。
 - 开启思考时，Anthropic 与 OpenAI 均不发送 `temperature`（两家 API 在推理模式下拒绝或忽略非默认温度）。

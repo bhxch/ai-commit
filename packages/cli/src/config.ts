@@ -239,16 +239,29 @@ export async function loadConfig(
   result.yes = parseBoolean(result.yes) ?? DEFAULTS.yes;
   result.all = parseBoolean(result.all) ?? DEFAULTS.all;
   result.thinking = parseBoolean(result.thinking) ?? DEFAULTS.thinking;
-  const parsedLevel = parseThinkingLevel(result.thinkingLevel);
-  if (result.thinkingLevel !== undefined && parsedLevel === undefined && onWarning) {
-    onWarning(`[warning] Invalid thinking level "${result.thinkingLevel}", using default ${DEFAULTS.thinkingLevel}.`);
-  }
-  result.thinkingLevel = parsedLevel ?? DEFAULTS.thinkingLevel;
   const parsedMode = parseThinkingMode(result.thinkingMode);
   if (result.thinkingMode !== undefined && parsedMode === undefined && onWarning) {
     onWarning(`[warning] Invalid thinking mode "${result.thinkingMode}", using default ${DEFAULTS.thinkingMode}.`);
   }
   result.thinkingMode = parsedMode ?? DEFAULTS.thinkingMode;
+
+  // In anthropic effort mode the level is forwarded verbatim as
+  // output_config.effort, so any non-empty string is accepted as-is.
+  // Every other combination needs a known tier: budget mode and Gemini
+  // look up a token-budget table, OpenAI's reasoning_effort is an enum.
+  let parsedLevel: string | undefined;
+  if (result.provider === 'anthropic' && result.thinkingMode === 'effort') {
+    parsedLevel = typeof result.thinkingLevel === 'string' ? result.thinkingLevel.trim() : undefined;
+    if (result.thinkingLevel !== undefined && !parsedLevel && onWarning) {
+      onWarning(`[warning] Empty thinking level, using default ${DEFAULTS.thinkingLevel}.`);
+    }
+  } else {
+    parsedLevel = parseThinkingLevel(result.thinkingLevel);
+    if (result.thinkingLevel !== undefined && parsedLevel === undefined && onWarning) {
+      onWarning(`[warning] Invalid thinking level "${result.thinkingLevel}", using default ${DEFAULTS.thinkingLevel}.`);
+    }
+  }
+  result.thinkingLevel = parsedLevel ?? DEFAULTS.thinkingLevel;
 
   // Emit fallback warnings only for the active provider
   if (onWarning && fallbackWarnings.length > 0) {

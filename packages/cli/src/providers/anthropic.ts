@@ -30,7 +30,8 @@ export class AnthropicProvider implements AIProvider {
     const systemMsg = messages.find(m => m.role === 'system')?.content || '';
     const chatMessages = messages.filter(m => m.role !== 'system');
 
-    const thinkingBudget = THINKING_BUDGET_TOKENS[options.thinkingLevel];
+    // budget mode always carries a validated tier (enforced in loadConfig)
+    const thinkingBudget = THINKING_BUDGET_TOKENS[options.thinkingLevel as ThinkingLevel];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const response = await this.client.messages.create({
       model: options.model,

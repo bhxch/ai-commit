@@ -32,7 +32,7 @@ export class OpenAIProvider implements AIProvider {
       model: options.model,
       messages: messages as OpenAI.ChatCompletionMessageParam[],
       ...(options.thinking
-        ? { reasoning_effort: options.thinkingLevel }
+        ? { reasoning_effort: options.thinkingLevel as OpenAI.ChatCompletionReasoningEffort }
         : { temperature: options.temperature }),
     });
     let content = completion.choices[0]?.message?.content || '';

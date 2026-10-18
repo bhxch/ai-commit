@@ -13,11 +13,18 @@ export type ThinkingLevel = 'low' | 'medium' | 'high' | 'xhigh' | 'max';
  */
 export type ThinkingMode = 'budget' | 'effort';
 
+/**
+ * Validated tier name, or — when the anthropic provider runs in `effort`
+ * mode — any non-empty string passed through verbatim to `output_config.effort`.
+ * The `(string & {})` union keeps IDE completions for the named tiers.
+ */
+export type ThinkingLevelValue = ThinkingLevel | (string & {});
+
 export interface GenerateOptions {
   model: string;
   temperature: number;
   thinking: boolean;
-  thinkingLevel: ThinkingLevel;
+  thinkingLevel: ThinkingLevelValue;
   thinkingMode: ThinkingMode;
 }
 
@@ -39,7 +46,7 @@ export interface ResolvedConfig {
   all: boolean;
   context: string | undefined;
   thinking: boolean;
-  thinkingLevel: ThinkingLevel;
+  thinkingLevel: ThinkingLevelValue;
   thinkingMode: ThinkingMode;
   /** Resolved HTTP(S) proxy URL ('' = none). */
   proxy: string;

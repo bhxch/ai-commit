@@ -290,4 +290,44 @@ describe('loadConfig', () => {
     expect(config.thinkingLevel).toBe('medium');
     expect(warnings.some((w) => w.includes('extreme'))).toBe(true);
   });
+
+  it('passes custom thinkingLevel through verbatim in anthropic effort mode', async () => {
+    const config = await loadConfig({
+      provider: 'anthropic',
+      thinkingLevel: 'ultra',
+      thinkingMode: 'effort',
+    });
+    expect(config.thinkingLevel).toBe('ultra');
+  });
+
+  it('keeps letter case in anthropic effort mode', async () => {
+    const config = await loadConfig({
+      provider: 'anthropic',
+      thinkingLevel: '  Ultra ',
+      thinkingMode: 'effort',
+    });
+    expect(config.thinkingLevel).toBe('Ultra');
+  });
+
+  it('still validates thinkingLevel in anthropic budget mode', async () => {
+    const warnings: string[] = [];
+    const config = await loadConfig(
+      { provider: 'anthropic', thinkingLevel: 'ultra' },
+      undefined,
+      (w) => warnings.push(w),
+    );
+    expect(config.thinkingLevel).toBe('medium');
+    expect(warnings.some((w) => w.includes('ultra'))).toBe(true);
+  });
+
+  it('still validates thinkingLevel for other providers in effort mode', async () => {
+    const warnings: string[] = [];
+    const config = await loadConfig(
+      { provider: 'openai', thinkingLevel: 'ultra', thinkingMode: 'effort' },
+      undefined,
+      (w) => warnings.push(w),
+    );
+    expect(config.thinkingLevel).toBe('medium');
+    expect(warnings.some((w) => w.includes('ultra'))).toBe(true);
+  });
 });
