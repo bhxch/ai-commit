@@ -25,7 +25,7 @@ Uses OpenAI, Gemini, or Anthropic to analyze your staged git diff and generate w
 npx @bhxch/aicommit
 ```
 
-Requirements: Node.js >= 18, a git repository with staged changes, and an API key.
+Requirements: Node.js >= 22.19, a git repository with staged changes, and an API key.
 
 ## Installation
 

@@ -25,7 +25,7 @@
 npx @bhxch/aicommit
 ```
 
-前提条件：Node.js >= 18、一个有暂存变更的 git 仓库、一个 API Key。
+前提条件：Node.js >= 22.19、一个有暂存变更的 git 仓库、一个 API Key。
 
 ## 安装
 
