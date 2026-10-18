@@ -136,7 +136,7 @@ describe('OpenAIProvider thinking control', () => {
     expect(args.temperature).toBe(0.7);
   });
 
-  it.each(['low', 'medium', 'high'] as const)(
+  it.each(['low', 'medium', 'high', 'xhigh', 'max'] as const)(
     'maps thinkingLevel %s to reasoning_effort and omits temperature',
     async (level) => {
       const provider = new OpenAIProvider(makeConfig('openai'));
