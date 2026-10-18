@@ -1,3 +1,6 @@
 node_modules/
 dist/
 *.tsbuildinfo
+# generated at publish time from the repo-root READMEs
+/README.md
+/README_EN.md
