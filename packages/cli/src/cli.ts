@@ -79,6 +79,7 @@ export async function run(opts: CLIOpts & Record<string, unknown>) {
         model: config.model,
         temperature: config.temperature,
         thinking: config.thinking,
+        thinkingLevel: config.thinkingLevel,
       });
     } catch (err) {
       throw new Error(`API error: ${formatApiError(err, config.provider)}`);

@@ -3,10 +3,13 @@ export interface Message {
   content: string;
 }
 
+export type ThinkingLevel = 'low' | 'medium' | 'high';
+
 export interface GenerateOptions {
   model: string;
   temperature: number;
   thinking: boolean;
+  thinkingLevel: ThinkingLevel;
 }
 
 export interface AIProvider {
@@ -27,6 +30,7 @@ export interface ResolvedConfig {
   all: boolean;
   context: string | undefined;
   thinking: boolean;
+  thinkingLevel: ThinkingLevel;
   /** Resolved HTTP(S) proxy URL ('' = none). */
   proxy: string;
   /** When true, ignore proxy settings and connect directly. */
@@ -60,6 +64,7 @@ export interface CLIOpts {
   dryRun?: boolean;
   yes?: boolean;
   thinking?: boolean;
+  thinkingLevel?: string;
   /** Proxy URL, or `false` (from `--no-proxy`) to force a direct connection. */
   proxy?: string | false;
 }
@@ -74,6 +79,7 @@ export interface RawConfigFile {
   stagedOnly?: boolean;
   gitmoji?: boolean;
   thinking?: boolean;
+  thinkingLevel?: string;
   suppressFallbackWarning?: boolean;
   /** HTTP(S) proxy URL. */
   proxy?: string;

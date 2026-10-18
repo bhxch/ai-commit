@@ -26,10 +26,14 @@ export class OpenAIProvider implements AIProvider {
   }
 
   async generate(messages: Message[], options: GenerateOptions): Promise<string> {
+    // reasoning_effort only applies to reasoning models; o-series rejects
+    // non-default temperature, so temperature is only sent when thinking is off.
     const completion = await this.client.chat.completions.create({
       model: options.model,
       messages: messages as OpenAI.ChatCompletionMessageParam[],
-      temperature: options.temperature,
+      ...(options.thinking
+        ? { reasoning_effort: options.thinkingLevel }
+        : { temperature: options.temperature }),
     });
     let content = completion.choices[0]?.message?.content || '';
     content = content.replace(/<think[^>]*>([\s\S]*?)<\/think[^>]*>/gi, '').trim();

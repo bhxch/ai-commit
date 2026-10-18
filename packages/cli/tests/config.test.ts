@@ -10,6 +10,7 @@ const AICOMMIT_ENV_KEYS = [
   'AICOMMIT_PROVIDER', 'AICOMMIT_MODEL', 'AICOMMIT_TEMPERATURE', 'AICOMMIT_LANGUAGE',
   'AICOMMIT_PREFIX', 'AICOMMIT_PROMPT_FILE', 'AICOMMIT_STAGED_ONLY', 'AICOMMIT_GITMOJI',
   'AICOMMIT_SUPPRESS_FALLBACK_WARNING',
+  'AICOMMIT_THINKING', 'AICOMMIT_THINKING_LEVEL',
   'AICOMMIT_OPENAI_API_KEY', 'AICOMMIT_OPENAI_BASE_URL', 'AICOMMIT_AZURE_API_VERSION',
   'AICOMMIT_GEMINI_API_KEY', 'AICOMMIT_GEMINI_BASE_URL',
   'AICOMMIT_ANTHROPIC_API_KEY', 'AICOMMIT_ANTHROPIC_BASE_URL',
@@ -226,5 +227,43 @@ describe('loadConfig', () => {
     const config = await loadConfig({}, TEST_DIR);
     expect(config.proxy).toBe('http://config:8080');
     expect(config.noProxy).toBe(true);
+  });
+
+  it('defaults thinking to false and thinkingLevel to medium', async () => {
+    const config = await loadConfig({});
+    expect(config.thinking).toBe(false);
+    expect(config.thinkingLevel).toBe('medium');
+  });
+
+  it('reads thinking and thinkingLevel from env vars', async () => {
+    process.env.AICOMMIT_THINKING = 'true';
+    process.env.AICOMMIT_THINKING_LEVEL = 'high';
+    const config = await loadConfig({});
+    expect(config.thinking).toBe(true);
+    expect(config.thinkingLevel).toBe('high');
+  });
+
+  it('reads thinkingLevel from config file', async () => {
+    const rcPath = join(TEST_DIR, '.aicommitrc.json');
+    writeConfigFile(rcPath, { thinking: true, thinkingLevel: 'low' });
+    const config = await loadConfig({}, TEST_DIR);
+    expect(config.thinking).toBe(true);
+    expect(config.thinkingLevel).toBe('low');
+  });
+
+  it('CLI thinkingLevel overrides env and file', async () => {
+    process.env.AICOMMIT_THINKING_LEVEL = 'high';
+    const rcPath = join(TEST_DIR, '.aicommitrc.json');
+    writeConfigFile(rcPath, { thinkingLevel: 'high' });
+    const config = await loadConfig({ thinkingLevel: 'low' }, TEST_DIR);
+    expect(config.thinkingLevel).toBe('low');
+  });
+
+  it('falls back to default with warning on invalid thinkingLevel', async () => {
+    process.env.AICOMMIT_THINKING_LEVEL = 'extreme';
+    const warnings: string[] = [];
+    const config = await loadConfig({}, undefined, (w) => warnings.push(w));
+    expect(config.thinkingLevel).toBe('medium');
+    expect(warnings.some((w) => w.includes('extreme'))).toBe(true);
   });
 });

@@ -75,6 +75,7 @@ The tool reads your staged diff, sends it to an AI model, and presents the gener
 | `--model <model>` | Model name (e.g. `gpt-4o`, `gemini-2.0-flash`) |
 | `--temperature <number>` | Sampling temperature, 0–2 (default: `0.7`) |
 | `--thinking` | Enable AI model thinking/reasoning mode (default: off) |
+| `--thinking-level <level>` | Thinking depth low/medium/high (default: `medium`) |
 | `--proxy <url>` | Route API requests through an HTTP(S) proxy |
 | `--no-proxy` | Ignore proxy settings and connect directly |
 
@@ -155,6 +156,7 @@ Create `.aicommitrc.json` in your project root or home directory:
   "language": "English",
   "gitmoji": true,
   "thinking": false,
+  "thinkingLevel": "medium",
   "prefix": "",
   "promptFile": "",
   "openai": {
@@ -192,6 +194,7 @@ Create `.aicommitrc.json` in your project root or home directory:
 | `AICOMMIT_PROMPT_FILE` | Custom prompt file path |
 | `AICOMMIT_GITMOJI` | Enable gitmoji (`true`/`false`) |
 | `AICOMMIT_THINKING` | Enable thinking mode (`true`/`false`) |
+| `AICOMMIT_THINKING_LEVEL` | Thinking depth (`low`/`medium`/`high`) |
 | `AICOMMIT_STAGED_ONLY` | Only use staged changes (`true`/`false`) |
 | `AICOMMIT_PROXY` | HTTP(S) proxy URL (falls back to `HTTPS_PROXY`/`HTTP_PROXY`) |
 | `AICOMMIT_NO_PROXY` | When `true`, ignore proxy and connect directly (kill switch) |

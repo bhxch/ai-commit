@@ -1,5 +1,12 @@
 import Anthropic from '@anthropic-ai/sdk';
-import type { AIProvider, Message, GenerateOptions, ResolvedConfig } from '../types.js';
+import type { AIProvider, Message, GenerateOptions, ResolvedConfig, ThinkingLevel } from '../types.js';
+
+// budget_tokens must be >= 1024 and < max_tokens; 4096 tokens are kept for the answer.
+const THINKING_BUDGET_TOKENS: Record<ThinkingLevel, number> = {
+  low: 2048,
+  medium: 8192,
+  high: 16384,
+};
 
 export class AnthropicProvider implements AIProvider {
   private client: Anthropic;
@@ -21,17 +28,18 @@ export class AnthropicProvider implements AIProvider {
     const systemMsg = messages.find(m => m.role === 'system')?.content || '';
     const chatMessages = messages.filter(m => m.role !== 'system');
 
+    const thinkingBudget = THINKING_BUDGET_TOKENS[options.thinkingLevel];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const response = await this.client.messages.create({
       model: options.model,
-      max_tokens: options.thinking ? 16000 : 4096,
+      max_tokens: options.thinking ? thinkingBudget + 4096 : 4096,
       system: systemMsg,
       messages: chatMessages.map(m => ({
         role: m.role as 'user' | 'assistant',
         content: m.content,
       })),
       ...(options.thinking
-        ? { thinking: { type: 'enabled' as const, budget_tokens: 10000 } }
+        ? { thinking: { type: 'enabled' as const, budget_tokens: thinkingBudget } }
         : { temperature: options.temperature }),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
