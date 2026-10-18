@@ -16,6 +16,7 @@
 - 4 层配置优先级：CLI 参数 > 环境变量 > 项目配置 > 全局配置
 - 自定义提示词文件
 - Dry-run 模式
+- lazygit 集成：一键生成消息并预填提交面板
 - 零配置默认值——只需设置 API Key 即可使用
 
 ## 快速开始
@@ -99,6 +100,36 @@ aicommit -c "重构了认证模块以使用 JWT"
 # 在消息前添加工单编号
 aicommit --prefix "PROJ-123"
 ```
+
+## 与 lazygit 配合使用
+
+[lazygit](https://github.com/jesseduffield/lazygit) v0.46.0 起内置了提交消息持久化机制：打开提交面板时会自动读取 git 目录下的 `LAZYGIT_PENDING_COMMIT` 文件预填消息，提交确认后自动清除。利用它，可以让 aicommit 生成的消息直接进入 lazygit 的提交流程。
+
+在 `~/.config/lazygit/config.yml` 中添加自定义命令：
+
+```yaml
+customCommands:
+  - key: '<c-a>'
+    context: 'global'
+    command: 'f="$(git rev-parse --git-dir)/LAZYGIT_PENDING_COMMIT"; aicommit --dry-run --staged-only 2>/dev/null | tee "$f.tmp"; test ${PIPESTATUS[0]} -eq 0 && mv "$f.tmp" "$f" || rm -f "$f.tmp"'
+    description: 'AI 生成 commit message（生成后按 c 预填提交）'
+    output: none
+    loadingText: '正在生成 commit message…'
+```
+
+使用流程：
+
+1. 在 Files 面板暂存变更（`space` 逐个暂存，`a` 全部暂存）
+2. 按 `<c-a>`，等待 AI 生成提交消息
+3. 在 Files 面板按 `c` 打开提交面板，消息已预填，可继续编辑
+4. 按 `enter` 确认提交
+
+说明：
+
+- `--dry-run` 只生成消息不提交，实际提交仍由 lazygit 完成；`--staged-only` 确保只基于已暂存变更生成
+- 消息先写入 `.tmp` 临时文件，成功后原子重命名为 `LAZYGIT_PENDING_COMMIT`；生成失败时（无暂存变更、API 出错等）不会写入新消息，按 `c` 得到的是正常的提交面板
+- 该文件位于 git 目录内，不会进入版本控制，提交确认后由 lazygit 自动删除
+- 命令使用了 bash 的 `PIPESTATUS`。lazygit 通过 `$SHELL -c` 执行自定义命令：`$SHELL` 为 bash 时一切正常；为 zsh 时会**静默失效**（不报错但消息不会写入）。跨 shell 请把命令中 `aicommit ... | tee ...` 起的部分改为 `if aicommit --dry-run --staged-only >"$f.tmp" 2>/dev/null; then mv "$f.tmp" "$f"; else rm -f "$f.tmp"; fi`
 
 ## 配置
 
