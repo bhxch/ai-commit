@@ -63,7 +63,7 @@ function makeOptions(overrides: Partial<GenerateOptions> = {}): GenerateOptions 
     model: 'test-model',
     temperature: 0.7,
     thinking: false,
-    thinkingLevel: 'medium',
+    thinkingLevel: 'low',
     thinkingMode: 'budget',
     ...overrides,
   };

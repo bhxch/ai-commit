@@ -39,7 +39,7 @@ const DEFAULTS: ResolvedConfig = {
   all: false,
   context: undefined,
   thinking: false,
-  thinkingLevel: 'medium',
+  thinkingLevel: 'low',
   thinkingMode: 'budget',
   proxy: '',
   noProxy: false,

@@ -75,7 +75,7 @@ The tool reads your staged diff, sends it to an AI model, and presents the gener
 | `--model <model>` | Model name (e.g. `gpt-4o`, `gemini-2.0-flash`) |
 | `--temperature <number>` | Sampling temperature, 0–2 (default: `0.7`) |
 | `--thinking` | Enable AI model thinking/reasoning mode (default: off) |
-| `--thinking-level <level>` | Thinking depth low/medium/high/xhigh/max (default: `medium`) |
+| `--thinking-level <level>` | Thinking depth low/medium/high/xhigh/max (default: `low`) |
 | `--thinking-mode <mode>` | Anthropic level mechanism budget/effort (default: `budget`; effort passes through native `output_config.effort`, Opus 4.6+ only, with `--thinking-level` forwarded verbatim without validation) |
 | `--proxy <url>` | Route API requests through an HTTP(S) proxy |
 | `--no-proxy` | Ignore proxy settings and connect directly |
@@ -289,7 +289,7 @@ aicommit --provider anthropic --model claude-sonnet-4-20250514
 
 ### Thinking control
 
-Use `--thinking` to enable reasoning mode and `--thinking-level` to set the depth (`low`/`medium`/`high`/`xhigh`/`max`, default: `medium`). Each tier maps to the provider's native parameter:
+Use `--thinking` to enable reasoning mode and `--thinking-level` to set the depth (`low`/`medium`/`high`/`xhigh`/`max`, default: `low`). Each tier maps to the provider's native parameter:
 
 | Provider | Mapped parameter | low | medium | high | xhigh | max |
 |---|---|---|---|---|---|---|

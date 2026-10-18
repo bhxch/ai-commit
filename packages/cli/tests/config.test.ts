@@ -229,10 +229,10 @@ describe('loadConfig', () => {
     expect(config.noProxy).toBe(true);
   });
 
-  it('defaults thinking to false and thinkingLevel to medium', async () => {
+  it('defaults thinking to false and thinkingLevel to low', async () => {
     const config = await loadConfig({});
     expect(config.thinking).toBe(false);
-    expect(config.thinkingLevel).toBe('medium');
+    expect(config.thinkingLevel).toBe('low');
     expect(config.thinkingMode).toBe('budget');
   });
 
@@ -287,7 +287,7 @@ describe('loadConfig', () => {
     process.env.AICOMMIT_THINKING_LEVEL = 'extreme';
     const warnings: string[] = [];
     const config = await loadConfig({}, undefined, (w) => warnings.push(w));
-    expect(config.thinkingLevel).toBe('medium');
+    expect(config.thinkingLevel).toBe('low');
     expect(warnings.some((w) => w.includes('extreme'))).toBe(true);
   });
 
@@ -316,7 +316,7 @@ describe('loadConfig', () => {
       undefined,
       (w) => warnings.push(w),
     );
-    expect(config.thinkingLevel).toBe('medium');
+    expect(config.thinkingLevel).toBe('low');
     expect(warnings.some((w) => w.includes('ultra'))).toBe(true);
   });
 
@@ -327,7 +327,7 @@ describe('loadConfig', () => {
       undefined,
       (w) => warnings.push(w),
     );
-    expect(config.thinkingLevel).toBe('medium');
+    expect(config.thinkingLevel).toBe('low');
     expect(warnings.some((w) => w.includes('ultra'))).toBe(true);
   });
 });

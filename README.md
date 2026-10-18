@@ -75,7 +75,7 @@ aicommit
 | `--model <model>` | 模型名称（如 `gpt-4o`、`gemini-2.0-flash`） |
 | `--temperature <number>` | 采样温度，0–2（默认：`0.7`） |
 | `--thinking` | 启用 AI 模型推理模式（默认关闭） |
-| `--thinking-level <level>` | 推理深度 low/medium/high/xhigh/max（默认 `medium`） |
+| `--thinking-level <level>` | 推理深度 low/medium/high/xhigh/max（默认 `low`） |
 | `--thinking-mode <mode>` | Anthropic 程度传递机制 budget/effort（默认 `budget`；effort 直传原生 `output_config.effort`，仅 Opus 4.6+ 等新模型支持，且 `--thinking-level` 不校验、原样透传） |
 | `--proxy <url>` | 通过指定的 HTTP(S) 代理路由 API 请求 |
 | `--no-proxy` | 忽略代理设置，强制直连 |
@@ -289,7 +289,7 @@ aicommit --provider anthropic --model claude-sonnet-4-20250514
 
 ### 思考控制（Thinking）
 
-`--thinking` 开启推理模式，`--thinking-level` 控制思考深度（`low`/`medium`/`high`/`xhigh`/`max`，默认 `medium`）。挡位按 provider 映射为各自的原生参数：
+`--thinking` 开启推理模式，`--thinking-level` 控制思考深度（`low`/`medium`/`high`/`xhigh`/`max`，默认 `low`）。挡位按 provider 映射为各自的原生参数：
 
 | Provider | 映射参数 | low | medium | high | xhigh | max |
 |---|---|---|---|---|---|---|
