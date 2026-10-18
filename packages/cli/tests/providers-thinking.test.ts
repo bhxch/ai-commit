@@ -64,6 +64,7 @@ function makeOptions(overrides: Partial<GenerateOptions> = {}): GenerateOptions 
     temperature: 0.7,
     thinking: false,
     thinkingLevel: 'medium',
+    thinkingMode: 'budget',
     ...overrides,
   };
 }
@@ -101,6 +102,33 @@ describe('AnthropicProvider thinking control', () => {
     expect(args.thinking).toEqual({ type: 'enabled', budget_tokens: budget });
     expect(args.max_tokens).toBe(maxTokens);
     expect(args.temperature).toBeUndefined();
+  });
+
+  it.each(['low', 'medium', 'high', 'xhigh', 'max'] as const)(
+    'passes thinkingLevel %s through as native output_config.effort in effort mode',
+    async (level) => {
+      const provider = new AnthropicProvider(makeConfig('anthropic'));
+      await provider.generate(
+        MESSAGES,
+        makeOptions({ thinking: true, thinkingLevel: level, thinkingMode: 'effort' }),
+      );
+      const args = mocks.anthropicCreate.mock.calls[0][0];
+      expect(args.output_config).toEqual({ effort: level });
+      expect(args.thinking).toBeUndefined();
+      expect(args.temperature).toBeUndefined();
+      expect(args.max_tokens).toBe(16000);
+    },
+  );
+
+  it('never sends output_config when thinking is off', async () => {
+    const provider = new AnthropicProvider(makeConfig('anthropic'));
+    await provider.generate(
+      MESSAGES,
+      makeOptions({ thinking: false, thinkingMode: 'effort' }),
+    );
+    const args = mocks.anthropicCreate.mock.calls[0][0];
+    expect(args.output_config).toBeUndefined();
+    expect(args.temperature).toBe(0.7);
   });
 });
 

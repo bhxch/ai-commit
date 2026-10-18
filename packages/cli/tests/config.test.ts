@@ -10,7 +10,7 @@ const AICOMMIT_ENV_KEYS = [
   'AICOMMIT_PROVIDER', 'AICOMMIT_MODEL', 'AICOMMIT_TEMPERATURE', 'AICOMMIT_LANGUAGE',
   'AICOMMIT_PREFIX', 'AICOMMIT_PROMPT_FILE', 'AICOMMIT_STAGED_ONLY', 'AICOMMIT_GITMOJI',
   'AICOMMIT_SUPPRESS_FALLBACK_WARNING',
-  'AICOMMIT_THINKING', 'AICOMMIT_THINKING_LEVEL',
+  'AICOMMIT_THINKING', 'AICOMMIT_THINKING_LEVEL', 'AICOMMIT_THINKING_MODE',
   'AICOMMIT_OPENAI_API_KEY', 'AICOMMIT_OPENAI_BASE_URL', 'AICOMMIT_AZURE_API_VERSION',
   'AICOMMIT_GEMINI_API_KEY', 'AICOMMIT_GEMINI_BASE_URL',
   'AICOMMIT_ANTHROPIC_API_KEY', 'AICOMMIT_ANTHROPIC_BASE_URL',
@@ -233,6 +233,21 @@ describe('loadConfig', () => {
     const config = await loadConfig({});
     expect(config.thinking).toBe(false);
     expect(config.thinkingLevel).toBe('medium');
+    expect(config.thinkingMode).toBe('budget');
+  });
+
+  it.each(['budget', 'effort'] as const)('accepts thinkingMode %s from env vars', async (mode) => {
+    process.env.AICOMMIT_THINKING_MODE = mode;
+    const config = await loadConfig({});
+    expect(config.thinkingMode).toBe(mode);
+  });
+
+  it('falls back to default with warning on invalid thinkingMode', async () => {
+    process.env.AICOMMIT_THINKING_MODE = 'turbo';
+    const warnings: string[] = [];
+    const config = await loadConfig({}, undefined, (w) => warnings.push(w));
+    expect(config.thinkingMode).toBe('budget');
+    expect(warnings.some((w) => w.includes('turbo'))).toBe(true);
   });
 
   it('reads thinking and thinkingLevel from env vars', async () => {

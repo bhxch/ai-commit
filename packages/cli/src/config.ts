@@ -1,7 +1,7 @@
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
-import type { ResolvedConfig, RawConfigFile, CLIOpts, ThinkingLevel } from './types.js';
+import type { ResolvedConfig, RawConfigFile, CLIOpts, ThinkingLevel, ThinkingMode } from './types.js';
 
 const ENV_VAR_MAP: Record<string, { primary: string; fallback?: string; path: string[] }> = {
   provider: { primary: 'AICOMMIT_PROVIDER', path: ['provider'] },
@@ -14,6 +14,7 @@ const ENV_VAR_MAP: Record<string, { primary: string; fallback?: string; path: st
   gitmoji: { primary: 'AICOMMIT_GITMOJI', path: ['gitmoji'] },
   thinking: { primary: 'AICOMMIT_THINKING', path: ['thinking'] },
   thinkingLevel: { primary: 'AICOMMIT_THINKING_LEVEL', path: ['thinkingLevel'] },
+  thinkingMode: { primary: 'AICOMMIT_THINKING_MODE', path: ['thinkingMode'] },
   suppressFallbackWarning: { primary: 'AICOMMIT_SUPPRESS_FALLBACK_WARNING', path: ['suppressFallbackWarning'] },
   openai_apiKey: { primary: 'AICOMMIT_OPENAI_API_KEY', fallback: 'OPENAI_API_KEY', path: ['openai', 'apiKey'] },
   openai_baseUrl: { primary: 'AICOMMIT_OPENAI_BASE_URL', fallback: 'OPENAI_BASE_URL', path: ['openai', 'baseUrl'] },
@@ -39,6 +40,7 @@ const DEFAULTS: ResolvedConfig = {
   context: undefined,
   thinking: false,
   thinkingLevel: 'medium',
+  thinkingMode: 'budget',
   proxy: '',
   noProxy: false,
   openai: { apiKey: '', baseUrl: '', apiVersion: '' },
@@ -101,6 +103,12 @@ function parseThinkingLevel(val: unknown): ThinkingLevel | undefined {
   return (v === 'low' || v === 'medium' || v === 'high' || v === 'xhigh' || v === 'max')
     ? v as ThinkingLevel
     : undefined;
+}
+
+function parseThinkingMode(val: unknown): ThinkingMode | undefined {
+  if (typeof val !== 'string') return undefined;
+  const v = val.trim().toLowerCase();
+  return (v === 'budget' || v === 'effort') ? v as ThinkingMode : undefined;
 }
 
 export async function loadConfig(
@@ -202,6 +210,7 @@ export async function loadConfig(
   if (cliOpts.all !== undefined) result.all = cliOpts.all;
   if (cliOpts.thinking !== undefined) result.thinking = cliOpts.thinking;
   if (cliOpts.thinkingLevel !== undefined) result.thinkingLevel = cliOpts.thinkingLevel as ThinkingLevel;
+  if (cliOpts.thinkingMode !== undefined) result.thinkingMode = cliOpts.thinkingMode as ThinkingMode;
 
   // Proxy resolution (dedicated priority, not via ENV_VAR_MAP).
   // Force-direct kill switch: CLI --no-proxy > AICOMMIT_NO_PROXY > config.
@@ -235,6 +244,11 @@ export async function loadConfig(
     onWarning(`[warning] Invalid thinking level "${result.thinkingLevel}", using default ${DEFAULTS.thinkingLevel}.`);
   }
   result.thinkingLevel = parsedLevel ?? DEFAULTS.thinkingLevel;
+  const parsedMode = parseThinkingMode(result.thinkingMode);
+  if (result.thinkingMode !== undefined && parsedMode === undefined && onWarning) {
+    onWarning(`[warning] Invalid thinking mode "${result.thinkingMode}", using default ${DEFAULTS.thinkingMode}.`);
+  }
+  result.thinkingMode = parsedMode ?? DEFAULTS.thinkingMode;
 
   // Emit fallback warnings only for the active provider
   if (onWarning && fallbackWarnings.length > 0) {

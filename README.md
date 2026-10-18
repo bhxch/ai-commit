@@ -76,6 +76,7 @@ aicommit
 | `--temperature <number>` | 采样温度，0–2（默认：`0.7`） |
 | `--thinking` | 启用 AI 模型推理模式（默认关闭） |
 | `--thinking-level <level>` | 推理深度 low/medium/high/xhigh/max（默认 `medium`） |
+| `--thinking-mode <mode>` | Anthropic 程度传递机制 budget/effort（默认 `budget`；effort 直传原生 `output_config.effort`，仅 Opus 4.6+ 等新模型支持） |
 | `--proxy <url>` | 通过指定的 HTTP(S) 代理路由 API 请求 |
 | `--no-proxy` | 忽略代理设置，强制直连 |
 
@@ -157,6 +158,7 @@ customCommands:
   "gitmoji": true,
   "thinking": false,
   "thinkingLevel": "medium",
+  "thinkingMode": "budget",
   "prefix": "",
   "promptFile": "",
   "openai": {
@@ -195,6 +197,7 @@ customCommands:
 | `AICOMMIT_GITMOJI` | 是否启用 gitmoji（`true`/`false`） |
 | `AICOMMIT_THINKING` | 启用推理模式（`true`/`false`） |
 | `AICOMMIT_THINKING_LEVEL` | 推理深度（`low`/`medium`/`high`/`xhigh`/`max`） |
+| `AICOMMIT_THINKING_MODE` | Anthropic 程度机制（`budget`/`effort`） |
 | `AICOMMIT_STAGED_ONLY` | 仅使用已暂存的变更（`true`/`false`） |
 | `AICOMMIT_PROXY` | HTTP(S) 代理 URL（回退到 `HTTPS_PROXY`/`HTTP_PROXY`） |
 | `AICOMMIT_NO_PROXY` | 设为 `true` 时忽略代理并直连（kill switch） |

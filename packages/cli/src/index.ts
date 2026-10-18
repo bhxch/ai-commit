@@ -31,6 +31,7 @@ program
   .option('--dry-run', 'generate message without committing')
   .option('--thinking', 'enable AI model thinking/reasoning mode')
   .option('--thinking-level <level>', 'thinking depth (low/medium/high/xhigh/max, default: medium)')
+  .option('--thinking-mode <mode>', 'anthropic level mechanism: budget|effort (default: budget)')
   .option('--proxy <url>', 'HTTP(S) proxy URL to route API requests through')
   .option('--no-proxy', 'ignore proxy settings and connect directly')
   .action(async (opts) => {

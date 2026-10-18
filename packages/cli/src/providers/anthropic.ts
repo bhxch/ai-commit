@@ -34,14 +34,18 @@ export class AnthropicProvider implements AIProvider {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const response = await this.client.messages.create({
       model: options.model,
-      max_tokens: options.thinking ? thinkingBudget + 4096 : 4096,
+      max_tokens: options.thinking
+        ? (options.thinkingMode === 'effort' ? 16000 : thinkingBudget + 4096)
+        : 4096,
       system: systemMsg,
       messages: chatMessages.map(m => ({
         role: m.role as 'user' | 'assistant',
         content: m.content,
       })),
       ...(options.thinking
-        ? { thinking: { type: 'enabled' as const, budget_tokens: thinkingBudget } }
+        ? (options.thinkingMode === 'effort'
+          ? { output_config: { effort: options.thinkingLevel } }
+          : { thinking: { type: 'enabled' as const, budget_tokens: thinkingBudget } })
         : { temperature: options.temperature }),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);

@@ -76,6 +76,7 @@ The tool reads your staged diff, sends it to an AI model, and presents the gener
 | `--temperature <number>` | Sampling temperature, 0–2 (default: `0.7`) |
 | `--thinking` | Enable AI model thinking/reasoning mode (default: off) |
 | `--thinking-level <level>` | Thinking depth low/medium/high/xhigh/max (default: `medium`) |
+| `--thinking-mode <mode>` | Anthropic level mechanism budget/effort (default: `budget`; effort passes through native `output_config.effort`, Opus 4.6+ only) |
 | `--proxy <url>` | Route API requests through an HTTP(S) proxy |
 | `--no-proxy` | Ignore proxy settings and connect directly |
 
@@ -157,6 +158,7 @@ Create `.aicommitrc.json` in your project root or home directory:
   "gitmoji": true,
   "thinking": false,
   "thinkingLevel": "medium",
+  "thinkingMode": "budget",
   "prefix": "",
   "promptFile": "",
   "openai": {
@@ -195,6 +197,7 @@ Create `.aicommitrc.json` in your project root or home directory:
 | `AICOMMIT_GITMOJI` | Enable gitmoji (`true`/`false`) |
 | `AICOMMIT_THINKING` | Enable thinking mode (`true`/`false`) |
 | `AICOMMIT_THINKING_LEVEL` | Thinking depth (`low`/`medium`/`high`/`xhigh`/`max`) |
+| `AICOMMIT_THINKING_MODE` | Anthropic level mechanism (`budget`/`effort`) |
 | `AICOMMIT_STAGED_ONLY` | Only use staged changes (`true`/`false`) |
 | `AICOMMIT_PROXY` | HTTP(S) proxy URL (falls back to `HTTPS_PROXY`/`HTTP_PROXY`) |
 | `AICOMMIT_NO_PROXY` | When `true`, ignore proxy and connect directly (kill switch) |

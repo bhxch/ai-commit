@@ -5,11 +5,20 @@ export interface Message {
 
 export type ThinkingLevel = 'low' | 'medium' | 'high' | 'xhigh' | 'max';
 
+/**
+ * How the thinking level reaches Anthropic: `budget` maps it to explicit
+ * `thinking.budget_tokens` (works on every extended-thinking model), `effort`
+ * passes it through natively as `output_config.effort` (Opus 4.6+ only).
+ * Gemini and OpenAI ignore this setting.
+ */
+export type ThinkingMode = 'budget' | 'effort';
+
 export interface GenerateOptions {
   model: string;
   temperature: number;
   thinking: boolean;
   thinkingLevel: ThinkingLevel;
+  thinkingMode: ThinkingMode;
 }
 
 export interface AIProvider {
@@ -31,6 +40,7 @@ export interface ResolvedConfig {
   context: string | undefined;
   thinking: boolean;
   thinkingLevel: ThinkingLevel;
+  thinkingMode: ThinkingMode;
   /** Resolved HTTP(S) proxy URL ('' = none). */
   proxy: string;
   /** When true, ignore proxy settings and connect directly. */
@@ -65,6 +75,7 @@ export interface CLIOpts {
   yes?: boolean;
   thinking?: boolean;
   thinkingLevel?: string;
+  thinkingMode?: string;
   /** Proxy URL, or `false` (from `--no-proxy`) to force a direct connection. */
   proxy?: string | false;
 }
@@ -80,6 +91,7 @@ export interface RawConfigFile {
   gitmoji?: boolean;
   thinking?: boolean;
   thinkingLevel?: string;
+  thinkingMode?: string;
   suppressFallbackWarning?: boolean;
   /** HTTP(S) proxy URL. */
   proxy?: string;
