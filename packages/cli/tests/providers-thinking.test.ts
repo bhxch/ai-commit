@@ -92,6 +92,8 @@ describe('AnthropicProvider thinking control', () => {
     ['low', 2048, 6144],
     ['medium', 8192, 12288],
     ['high', 16384, 20480],
+    ['xhigh', 24576, 28672],
+    ['max', 32000, 36096],
   ])('maps thinkingLevel %s to budget_tokens %i', async (level, budget, maxTokens) => {
     const provider = new AnthropicProvider(makeConfig('anthropic'));
     await provider.generate(MESSAGES, makeOptions({ thinking: true, thinkingLevel: level as 'low' }));
@@ -114,7 +116,9 @@ describe('GeminiProvider thinking control', () => {
   it.each([
     ['low', 2048],
     ['medium', 8192],
-    ['high', 24576],
+    ['high', 16384],
+    ['xhigh', 24576],
+    ['max', 32768],
   ])('maps thinkingLevel %s to thinkingBudget %i', async (level, budget) => {
     const provider = new GeminiProvider(makeConfig('gemini'));
     await provider.generate(MESSAGES, makeOptions({ thinking: true, thinkingLevel: level as 'low' }));

@@ -1,11 +1,14 @@
 import { GoogleGenAI } from '@google/genai';
 import type { AIProvider, Message, GenerateOptions, ResolvedConfig, ThinkingLevel } from '../types.js';
 
-// thinkingBudget in tokens; 24576 is the upper bound accepted by Gemini 2.5 Flash.
+// thinkingBudget in tokens; 24576 is the upper bound for Gemini 2.5 Flash,
+// 32768 for Gemini 2.5 Pro — the `max` tier therefore requires a Pro model.
 const THINKING_BUDGET: Record<ThinkingLevel, number> = {
   low: 2048,
   medium: 8192,
-  high: 24576,
+  high: 16384,
+  xhigh: 24576,
+  max: 32768,
 };
 
 export class GeminiProvider implements AIProvider {

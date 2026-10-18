@@ -98,7 +98,9 @@ function parseNumber(val: unknown): number | undefined {
 function parseThinkingLevel(val: unknown): ThinkingLevel | undefined {
   if (typeof val !== 'string') return undefined;
   const v = val.trim().toLowerCase();
-  return (v === 'low' || v === 'medium' || v === 'high') ? v : undefined;
+  return (v === 'low' || v === 'medium' || v === 'high' || v === 'xhigh' || v === 'max')
+    ? v as ThinkingLevel
+    : undefined;
 }
 
 export async function loadConfig(

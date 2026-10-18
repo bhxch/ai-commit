@@ -3,7 +3,7 @@ export interface Message {
   content: string;
 }
 
-export type ThinkingLevel = 'low' | 'medium' | 'high';
+export type ThinkingLevel = 'low' | 'medium' | 'high' | 'xhigh' | 'max';
 
 export interface GenerateOptions {
   model: string;

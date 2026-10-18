@@ -243,6 +243,15 @@ describe('loadConfig', () => {
     expect(config.thinkingLevel).toBe('high');
   });
 
+  it.each(['low', 'medium', 'high', 'xhigh', 'max'] as const)(
+    'accepts thinkingLevel %s from env vars',
+    async (level) => {
+      process.env.AICOMMIT_THINKING_LEVEL = level;
+      const config = await loadConfig({});
+      expect(config.thinkingLevel).toBe(level);
+    },
+  );
+
   it('reads thinkingLevel from config file', async () => {
     const rcPath = join(TEST_DIR, '.aicommitrc.json');
     writeConfigFile(rcPath, { thinking: true, thinkingLevel: 'low' });

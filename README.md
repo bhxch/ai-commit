@@ -75,7 +75,7 @@ aicommit
 | `--model <model>` | 模型名称（如 `gpt-4o`、`gemini-2.0-flash`） |
 | `--temperature <number>` | 采样温度，0–2（默认：`0.7`） |
 | `--thinking` | 启用 AI 模型推理模式（默认关闭） |
-| `--thinking-level <level>` | 推理深度 low/medium/high（默认 `medium`） |
+| `--thinking-level <level>` | 推理深度 low/medium/high/xhigh/max（默认 `medium`） |
 | `--proxy <url>` | 通过指定的 HTTP(S) 代理路由 API 请求 |
 | `--no-proxy` | 忽略代理设置，强制直连 |
 
@@ -194,7 +194,7 @@ customCommands:
 | `AICOMMIT_PROMPT_FILE` | 自定义提示词文件路径 |
 | `AICOMMIT_GITMOJI` | 是否启用 gitmoji（`true`/`false`） |
 | `AICOMMIT_THINKING` | 启用推理模式（`true`/`false`） |
-| `AICOMMIT_THINKING_LEVEL` | 推理深度（`low`/`medium`/`high`） |
+| `AICOMMIT_THINKING_LEVEL` | 推理深度（`low`/`medium`/`high`/`xhigh`/`max`） |
 | `AICOMMIT_STAGED_ONLY` | 仅使用已暂存的变更（`true`/`false`） |
 | `AICOMMIT_PROXY` | HTTP(S) 代理 URL（回退到 `HTTPS_PROXY`/`HTTP_PROXY`） |
 | `AICOMMIT_NO_PROXY` | 设为 `true` 时忽略代理并直连（kill switch） |

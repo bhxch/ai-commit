@@ -6,6 +6,8 @@ const THINKING_BUDGET_TOKENS: Record<ThinkingLevel, number> = {
   low: 2048,
   medium: 8192,
   high: 16384,
+  xhigh: 24576,
+  max: 32000,
 };
 
 export class AnthropicProvider implements AIProvider {
