@@ -11,7 +11,7 @@ const { mockGitMethods } = vi.hoisted(() => ({
 
 // Mock simple-git to return a shared mock object
 vi.mock('simple-git', () => ({
-  default: () => mockGitMethods,
+  simpleGit: () => mockGitMethods,
 }));
 
 import { getStagedDiff, stageAllChanges, gitCommit, truncateDiff } from '../src/git.js';
