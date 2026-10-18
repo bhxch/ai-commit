@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 import type { AIProvider, Message, GenerateOptions, ResolvedConfig } from '../types.js';
 
 export class GeminiProvider implements AIProvider {
@@ -9,50 +9,41 @@ export class GeminiProvider implements AIProvider {
   }
 
   async generate(messages: Message[], options: GenerateOptions): Promise<string> {
-    const genAI = new GoogleGenerativeAI(this.config.gemini.apiKey);
-    const modelOpts: any = { model: options.model };
+    const client = new GoogleGenAI({
+      apiKey: this.config.gemini.apiKey,
+      ...(this.config.gemini.baseUrl
+        ? { httpOptions: { baseUrl: this.config.gemini.baseUrl } }
+        : {}),
+    });
 
     // Extract system messages for systemInstruction
     const systemMessages = messages.filter(m => m.role === 'system');
     const nonSystemMessages = messages.filter(m => m.role !== 'system');
 
-    if (systemMessages.length > 0) {
-      modelOpts.systemInstruction = systemMessages.map(m => m.content).join('\n');
-    }
-
-    if (this.config.gemini.baseUrl) {
-      modelOpts.baseUrl = this.config.gemini.baseUrl;
-    }
-    const model = genAI.getGenerativeModel(modelOpts);
-
-    // Build history from non-system messages, excluding the last user message
-    const history: Array<{ role: string; parts: Array<{ text: string }> }> = [];
     if (nonSystemMessages.length === 0) {
       throw new Error('No user message provided to Gemini provider');
     }
     const lastMessage = nonSystemMessages[nonSystemMessages.length - 1];
     const historyMessages = nonSystemMessages.slice(0, -1);
 
-    for (const msg of historyMessages) {
-      history.push({
+    const chat = client.chats.create({
+      model: options.model,
+      config: {
+        ...(systemMessages.length > 0
+          ? { systemInstruction: systemMessages.map(m => m.content).join('\n') }
+          : {}),
+        temperature: options.temperature,
+        ...(options.thinking ? { thinkingConfig: { thinkingBudget: 8000 } } : {}),
+      },
+      history: historyMessages.map(msg => ({
         role: msg.role === 'assistant' ? 'model' : 'user',
         parts: [{ text: msg.content }],
-      });
-    }
-
-    const genConfig: Record<string, unknown> = { temperature: options.temperature };
-    if (options.thinking) {
-      genConfig.thinkingBudget = 8000;
-    }
-
-    const chat = model.startChat({
-      history,
-      generationConfig: genConfig,
+      })),
     });
 
     // Send the last message
-    const result = await chat.sendMessage(lastMessage.content);
-    let content = result.response.text();
+    const response = await chat.sendMessage({ message: lastMessage.content });
+    let content = response.text ?? '';
     content = content.replace(/<think[^>]*>([\s\S]*?)<\/think[^>]*>/gi, '').trim();
     return content;
   }
