@@ -95,6 +95,9 @@ aicommit -a -y
 # Use Anthropic with a specific model
 aicommit --provider anthropic --model claude-sonnet-4-20250514
 
+# Enable reasoning mode with a specific depth
+aicommit --thinking --thinking-level high
+
 # Generate a Chinese commit message
 aicommit -l "简体中文"
 
@@ -283,6 +286,23 @@ aicommit --provider gemini --model gemini-2.0-flash
 export AICOMMIT_ANTHROPIC_API_KEY="sk-ant-xxx"
 aicommit --provider anthropic --model claude-sonnet-4-20250514
 ```
+
+### Thinking control
+
+Use `--thinking` to enable reasoning mode and `--thinking-level` to set the depth (`low`/`medium`/`high`/`xhigh`/`max`, default: `medium`). Each tier maps to the provider's native parameter:
+
+| Provider | Mapped parameter | low | medium | high | xhigh | max |
+|---|---|---|---|---|---|---|
+| Anthropic | `thinking.budget_tokens` (default `budget` mode) | 2048 | 8192 | 16384 | 24576 | 32000 |
+| Gemini | `thinkingConfig.thinkingBudget` | 2048 | 8192 | 16384 | 24576 | 32768 |
+| OpenAI | `reasoning_effort` (passed through) | low | medium | high | xhigh | max |
+
+Notes:
+
+- **Anthropic**: pass `--thinking-mode effort` (or `AICOMMIT_THINKING_MODE=effort`) to send the native `output_config.effort` instead. This is only supported on Opus 4.6+ and newer; older models return a 400 error. The default `budget` mode works on every extended-thinking model (Sonnet 4.5 and later).
+- **Gemini**: the `max` tier (32768) requires Gemini 2.5 Pro; Flash models cap at 24576 (`xhigh`).
+- **OpenAI**: `reasoning_effort` only applies to reasoning models (o-series, gpt-5 series, etc.); it is omitted when thinking is off.
+- While thinking is on, Anthropic and OpenAI requests omit `temperature` (both APIs reject or ignore non-default values in reasoning mode).
 
 ## Development
 

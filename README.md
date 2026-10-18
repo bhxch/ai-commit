@@ -95,6 +95,9 @@ aicommit -a -y
 # 使用 Anthropic 并指定模型
 aicommit --provider anthropic --model claude-sonnet-4-20250514
 
+# 开启推理模式并指定思考深度
+aicommit --thinking --thinking-level high
+
 # 生成中文提交消息
 aicommit -l "简体中文"
 
@@ -283,6 +286,23 @@ aicommit --provider gemini --model gemini-2.0-flash
 export AICOMMIT_ANTHROPIC_API_KEY="sk-ant-xxx"
 aicommit --provider anthropic --model claude-sonnet-4-20250514
 ```
+
+### 思考控制（Thinking）
+
+`--thinking` 开启推理模式，`--thinking-level` 控制思考深度（`low`/`medium`/`high`/`xhigh`/`max`，默认 `medium`）。挡位按 provider 映射为各自的原生参数：
+
+| Provider | 映射参数 | low | medium | high | xhigh | max |
+|---|---|---|---|---|---|---|
+| Anthropic | `thinking.budget_tokens`（默认 `budget` 模式） | 2048 | 8192 | 16384 | 24576 | 32000 |
+| Gemini | `thinkingConfig.thinkingBudget` | 2048 | 8192 | 16384 | 24576 | 32768 |
+| OpenAI | `reasoning_effort`（同名直传） | low | medium | high | xhigh | max |
+
+注意事项：
+
+- **Anthropic** 可用 `--thinking-mode effort`（或 `AICOMMIT_THINKING_MODE=effort`）改为直传原生 `output_config.effort`，仅 Opus 4.6+ 等新模型支持，旧模型会返回 400；默认 `budget` 模式对所有支持 extended thinking 的模型（Sonnet 4.5 起）兼容。
+- **Gemini** 的 `max` 挡（32768）需要 Gemini 2.5 Pro，Flash 系列上限为 24576（`xhigh`）。
+- **OpenAI** 的 `reasoning_effort` 仅推理模型（o 系列、gpt-5 系列等）支持；关闭思考时不会发送该参数。
+- 开启思考时，Anthropic 与 OpenAI 均不发送 `temperature`（两家 API 在推理模式下拒绝或忽略非默认温度）。
 
 ## 开发
 
